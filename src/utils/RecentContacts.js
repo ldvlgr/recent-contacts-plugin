@@ -1,6 +1,6 @@
 import { Manager } from '@twilio/flex-ui';
 const RecentContactsKey = 'RECENT_CONTACTS';
-const MaxContacts = '5';
+const MaxContacts = '15';
 
 class RecentContacts {
   

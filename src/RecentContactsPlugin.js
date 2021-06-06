@@ -37,11 +37,6 @@ export default class RecentContactsPlugin extends FlexPlugin {
       </View>
     );
 
-    //Add Clear history button to delete localStorage
-    //const with MaxContacts = 10
-    //remove oldest from list when adding 11th
-
-
     manager.workerClient.on("reservationCreated", reservation => {
       console.log('reservationCreated: ', reservation);
 
