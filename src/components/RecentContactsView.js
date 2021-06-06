@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Actions, withTheme, Manager, IconButton } from '@twilio/flex-ui';
 import RecentContacts from '../utils/RecentContacts';
 
-//import styled from 'react-emotion';
+import styled from 'react-emotion';
 import {
   Button,
   TableHead,
@@ -13,6 +13,10 @@ import {
   TableCell,
 } from "@material-ui/core";
 //import { withStyles } from "@material-ui/core/styles";
+
+const ContactData = styled('div')`
+  font-size: 12px;
+`;
 
 
 const RecentContactsView = () => {
@@ -29,8 +33,8 @@ const RecentContactsView = () => {
         <TableHead>
           <TableRow>
             <TableCell>Channel</TableCell>
+            <TableCell>Phone Number</TableCell>
             <TableCell>Name</TableCell>
-            <TableCell>Number</TableCell>
             <TableCell>Date & Time</TableCell>
             <TableCell>Queue</TableCell>
             <TableCell>Direction</TableCell>
@@ -57,11 +61,11 @@ const RecentContactsView = () => {
           
               </TableCell>
 
-              <TableCell>{rc.name}</TableCell>
-              <TableCell>{rc.number}</TableCell>
-              <TableCell>{rc.dateTime}</TableCell>
-              <TableCell>{rc.queue}</TableCell>
-              <TableCell>{rc.direction}</TableCell>
+              <TableCell><ContactData>{rc.number}</ContactData></TableCell>
+              <TableCell><ContactData>{rc.name}</ContactData></TableCell>
+              <TableCell><ContactData>{rc.dateTime}</ContactData></TableCell>
+              <TableCell><ContactData>{rc.queue}</ContactData></TableCell>
+              <TableCell><ContactData>{rc.direction}</ContactData></TableCell>
 
             </TableRow>))}
 
