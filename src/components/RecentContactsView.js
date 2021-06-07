@@ -18,6 +18,7 @@ const ContactData = styled('div')`
   font-size: 12px;
 `;
 
+//Initial version using localStorage
 
 const RecentContactsView = () => {
 

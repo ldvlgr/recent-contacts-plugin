@@ -4,8 +4,12 @@ import { FlexPlugin } from 'flex-plugin';
 
 import reducers, { namespace } from './states';
 import RecentContactsNavButton from './components/RecentContactsNavButton';
-import RecentContactsView from './components/RecentContactsView';
-import RecentContacts from './utils/RecentContacts';
+// import RecentContactsView from './components/RecentContactsView';
+// import RecentContacts from './utils/RecentContacts';
+
+import ContactHistory from './components/ContactHistoryView';
+
+import { Actions as ContactHistoryActions } from './states/ContactHistoryState';
 
 const PLUGIN_NAME = 'RecentContactsPlugin';
 
@@ -31,11 +35,21 @@ export default class RecentContactsPlugin extends FlexPlugin {
     );
 
     // Add view to the ViewCollection
+
+    // Initial version using localStorage
+    // flex.ViewCollection.Content.add(
+    //   <View name="recent-contacts-view" key="recent-contacts-view">
+    //     <RecentContactsView key="co-recent-view" />
+    //   </View>
+    //);
+
+    // New view using Redux app state
     flex.ViewCollection.Content.add(
       <View name="recent-contacts-view" key="recent-contacts-view">
-        <RecentContactsView key="co-recent-view" />
+        <ContactHistory key="co-recent-view" />
       </View>
     );
+
 
     manager.workerClient.on("reservationCreated", reservation => {
       console.log('reservationCreated: ', reservation);
@@ -59,7 +73,13 @@ export default class RecentContactsPlugin extends FlexPlugin {
         contact.direction = 'webchat';
       }
       console.log('UPDATED CONTACT OBJECT:', contact);
-      RecentContacts.storeNewContact(contact);
+      //Using localStorage
+      //RecentContacts.storeNewContact(contact);
+
+      //Using Redux app state
+      manager.store.dispatch(ContactHistoryActions.addContactToHistory(contact));
+
+
 
     });
   }
