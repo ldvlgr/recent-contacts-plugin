@@ -54,35 +54,41 @@ export default class RecentContactsPlugin extends FlexPlugin {
     manager.workerClient.on("reservationCreated", reservation => {
       console.log('reservationCreated: ', reservation);
 
-      const channel = reservation.task.taskChannelUniqueName;
-      const taskSid = reservation.task.sid;
-      const queue = reservation.task.queueName;
-      const dateTime = reservation.task.dateCreated.toLocaleString('en-US');
-      const { direction, from, outbound_to, call_sid } = reservation.task.attributes;
-      let contact = { direction, channel, call_sid, dateTime, taskSid, queue };
-
-      if (channel === 'voice') {
-        contact.name = 'Caller';
-        if (direction === 'inbound') {
-          contact.number = from;
-        } else {
-          contact.number = outbound_to;
-        }
-      } else {
-        contact.name = 'Chat Guest';
-        contact.direction = 'webchat';
-      }
-      console.log('UPDATED CONTACT OBJECT:', contact);
-      //Using localStorage
-      //RecentContacts.storeNewContact(contact);
-
-      //Using Redux app state
-      manager.store.dispatch(ContactHistoryActions.addContactToHistory(contact));
-
-
-
+      reservation.on('wrapup', reservation => {
+        this.addContact(manager, reservation);
+      });
     });
   }
+
+
+  addContact(manager, reservation) {
+    const channel = reservation.task.taskChannelUniqueName;
+    const taskSid = reservation.task.sid;
+    const queue = reservation.task.queueName;
+    const dateTime = reservation.task.dateCreated.toLocaleString('en-US');
+    const { direction, from, outbound_to, call_sid } = reservation.task.attributes;
+    let contact = { direction, channel, call_sid, dateTime, taskSid, queue };
+
+    if (channel === 'voice') {
+      contact.name = 'Caller';
+      if (direction === 'inbound') {
+        contact.number = from;
+      } else {
+        contact.number = outbound_to;
+      }
+    } else {
+      contact.name = 'Chat Guest';
+      contact.direction = 'webchat';
+    }
+    console.log('UPDATED CONTACT OBJECT:', contact);
+    //Using localStorage
+    //RecentContacts.storeNewContact(contact);
+
+    //Using Redux app state
+    manager.store.dispatch(ContactHistoryActions.addContactToHistory(contact));
+  }
+
+
 
   /**
    * Registers the plugin reducers
