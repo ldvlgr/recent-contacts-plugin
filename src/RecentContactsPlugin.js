@@ -69,12 +69,17 @@ export default class RecentContactsPlugin extends FlexPlugin {
     const queue = reservation.task.queueName;
     const dateTime = reservation.task.dateCreated.toLocaleString('en-US');
     const duration = reservation.task.age;
-
-    const { direction, from, outbound_to, call_sid } = reservation.task.attributes;
+    //Enable caller name number lookup on phone number to populate name
+    const { direction, from, outbound_to, call_sid, caller_name } = reservation.task.attributes;
     let contact = { direction, channel, call_sid, dateTime, taskSid, queue, duration };
 
+    //Default
+    contact.name = 'Customer';
+
     if (channel === 'voice') {
-      contact.name = 'Caller';
+      if (caller_name) {
+        contact.name = caller_name;
+      }
       if (direction === 'inbound') {
         contact.number = from;
       } else {
