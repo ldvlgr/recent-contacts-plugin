@@ -62,12 +62,16 @@ export default class RecentContactsPlugin extends FlexPlugin {
 
 
   addContact(manager, reservation) {
+    console.log('WRAPUP RESERVATION:', reservation);
+    
     const channel = reservation.task.taskChannelUniqueName;
     const taskSid = reservation.task.sid;
     const queue = reservation.task.queueName;
     const dateTime = reservation.task.dateCreated.toLocaleString('en-US');
+    const duration = reservation.task.age;
+
     const { direction, from, outbound_to, call_sid } = reservation.task.attributes;
-    let contact = { direction, channel, call_sid, dateTime, taskSid, queue };
+    let contact = { direction, channel, call_sid, dateTime, taskSid, queue, duration };
 
     if (channel === 'voice') {
       contact.name = 'Caller';

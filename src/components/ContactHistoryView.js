@@ -40,6 +40,7 @@ class ContactHistory extends React.Component {
               <TableCell>Phone Number</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Date & Time</TableCell>
+              <TableCell>Duration</TableCell>
               <TableCell>Queue</TableCell>
               <TableCell>Direction</TableCell>
 
@@ -68,6 +69,7 @@ class ContactHistory extends React.Component {
                 <TableCell><ContactData>{rc.number}</ContactData></TableCell>
                 <TableCell><ContactData>{rc.name}</ContactData></TableCell>
                 <TableCell><ContactData>{rc.dateTime}</ContactData></TableCell>
+                <TableCell><ContactData>{rc.duration}</ContactData></TableCell>
                 <TableCell><ContactData>{rc.queue}</ContactData></TableCell>
                 <TableCell><ContactData>{rc.direction}</ContactData></TableCell>
 
