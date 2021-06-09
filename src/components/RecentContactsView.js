@@ -39,6 +39,8 @@ const RecentContactsView = () => {
             <TableCell>Date & Time</TableCell>
             <TableCell>Queue</TableCell>
             <TableCell>Direction</TableCell>
+            <TableCell>Outcome</TableCell>
+
 
           </TableRow>
 
@@ -67,6 +69,7 @@ const RecentContactsView = () => {
               <TableCell><ContactData>{rc.dateTime}</ContactData></TableCell>
               <TableCell><ContactData>{rc.queue}</ContactData></TableCell>
               <TableCell><ContactData>{rc.direction}</ContactData></TableCell>
+              <TableCell><ContactData>{rc.outcome}</ContactData></TableCell>
 
             </TableRow>))}
 

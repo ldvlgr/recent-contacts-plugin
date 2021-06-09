@@ -43,6 +43,7 @@ class ContactHistory extends React.Component {
               <TableCell>Duration</TableCell>
               <TableCell>Queue</TableCell>
               <TableCell>Direction</TableCell>
+              <TableCell>Outcome</TableCell>
 
             </TableRow>
 
@@ -72,7 +73,7 @@ class ContactHistory extends React.Component {
                 <TableCell><ContactData>{rc.duration}</ContactData></TableCell>
                 <TableCell><ContactData>{rc.queue}</ContactData></TableCell>
                 <TableCell><ContactData>{rc.direction}</ContactData></TableCell>
-
+                <TableCell><ContactData>{rc.outcome}</ContactData></TableCell>
               </TableRow>))}
 
           </TableBody>

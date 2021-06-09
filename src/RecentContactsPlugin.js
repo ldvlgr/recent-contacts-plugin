@@ -54,7 +54,7 @@ export default class RecentContactsPlugin extends FlexPlugin {
     manager.workerClient.on("reservationCreated", reservation => {
       console.log('reservationCreated: ', reservation);
 
-      reservation.on('wrapup', reservation => {
+      reservation.on('completed', reservation => {
         this.addContact(manager, reservation);
       });
     });
@@ -62,7 +62,7 @@ export default class RecentContactsPlugin extends FlexPlugin {
 
 
   addContact(manager, reservation) {
-    console.log('WRAPUP RESERVATION:', reservation);
+    console.log('RESERVATION:', reservation);
     
     const channel = reservation.task.taskChannelUniqueName;
     const taskSid = reservation.task.sid;
@@ -71,7 +71,10 @@ export default class RecentContactsPlugin extends FlexPlugin {
     const duration = reservation.task.age;
     //Enable caller name number lookup on phone number to populate name
     const { direction, from, outbound_to, call_sid, caller_name } = reservation.task.attributes;
-    let contact = { direction, channel, call_sid, dateTime, taskSid, queue, duration };
+
+    let outcome = reservation.task.attributes?.conversations?.outcome || 'Completed';
+
+    let contact = { direction, channel, call_sid, dateTime, taskSid, queue, duration, outcome };
 
     //Default
     contact.name = 'Customer';
