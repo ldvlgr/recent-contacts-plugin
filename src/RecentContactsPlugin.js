@@ -1,5 +1,5 @@
 import React from 'react';
-import { VERSION, View } from '@twilio/flex-ui';
+import { Actions, VERSION, View } from '@twilio/flex-ui';
 import { FlexPlugin } from 'flex-plugin';
 
 import reducers, { namespace } from './states';
@@ -8,6 +8,7 @@ import RecentContactsNavButton from './components/RecentContactsNavButton';
 // import RecentContacts from './utils/RecentContacts';
 
 import ContactHistory from './components/ContactHistoryView';
+import DispositionDialog from './components/DispositionDialog';
 
 import { Actions as ContactHistoryActions } from './states/ContactHistoryState';
 
@@ -51,8 +52,20 @@ export default class RecentContactsPlugin extends FlexPlugin {
     );
 
 
+    flex.AgentDesktopView.Panel1.Content.add(<DispositionDialog
+      key="disposition-modal"
+    />, { sortOrder: 100 });
+
+
     manager.workerClient.on("reservationCreated", reservation => {
       console.log('reservationCreated: ', reservation);
+
+      reservation.on('wrapup', reservation => {
+        Actions.invokeAction('SetComponentState', {
+          name: 'DispositionDialog',
+          state: { isOpen: true }
+        });
+      });
 
       reservation.on('completed', reservation => {
         this.addContact(manager, reservation);
