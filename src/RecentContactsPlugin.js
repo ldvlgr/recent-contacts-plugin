@@ -76,23 +76,25 @@ export default class RecentContactsPlugin extends FlexPlugin {
 
   addContact(manager, reservation) {
     console.log('RESERVATION:', reservation);
-    
+
     const channel = reservation.task.taskChannelUniqueName;
     const taskSid = reservation.task.sid;
     const queue = reservation.task.queueName;
     const dateTime = reservation.task.dateCreated.toLocaleString('en-US');
     const duration = reservation.task.age;
     //Enable caller name number lookup on phone number to populate name
-    const { direction, from, outbound_to, call_sid, caller_name } = reservation.task.attributes;
+    const { direction, from, outbound_to, call_sid, caller_name, channelType, name } = reservation.task.attributes;
+
 
     let outcome = reservation.task.attributes?.conversations?.outcome || 'Completed';
 
-    let contact = { direction, channel, call_sid, dateTime, taskSid, queue, duration, outcome };
+    let contact = { direction, channel, call_sid, dateTime, taskSid, queue, duration, outcome, channelType };
 
     //Default
     contact.name = 'Customer';
 
     if (channel === 'voice') {
+      contact.channelType = channel;
       if (caller_name) {
         contact.name = caller_name;
       }
@@ -101,9 +103,11 @@ export default class RecentContactsPlugin extends FlexPlugin {
       } else {
         contact.number = outbound_to;
       }
-    } else {
-      contact.name = 'Chat Guest';
-      contact.direction = 'webchat';
+    }
+    //For channelType = SMS, name will have phone number
+
+    if (channelType == 'sms') {
+      contact.number = name;
     }
     console.log('UPDATED CONTACT OBJECT:', contact);
     //Using localStorage

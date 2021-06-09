@@ -37,12 +37,13 @@ class ContactHistory extends React.Component {
           <TableHead>
             <TableRow>
               <TableCell>Channel</TableCell>
+              <TableCell>Type</TableCell>
+              <TableCell>Direction</TableCell>
               <TableCell>Phone Number</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Date & Time</TableCell>
               <TableCell>Duration</TableCell>
               <TableCell>Queue</TableCell>
-              <TableCell>Direction</TableCell>
               <TableCell>Outcome</TableCell>
 
             </TableRow>
@@ -66,13 +67,13 @@ class ContactHistory extends React.Component {
                     }} />
 
                 </TableCell>
-
+                <TableCell><ContactData>{rc.channelType}</ContactData></TableCell>
+                <TableCell><ContactData>{rc.direction}</ContactData></TableCell>
                 <TableCell><ContactData>{rc.number}</ContactData></TableCell>
                 <TableCell><ContactData>{rc.name}</ContactData></TableCell>
                 <TableCell><ContactData>{rc.dateTime}</ContactData></TableCell>
                 <TableCell><ContactData>{rc.duration}</ContactData></TableCell>
                 <TableCell><ContactData>{rc.queue}</ContactData></TableCell>
-                <TableCell><ContactData>{rc.direction}</ContactData></TableCell>
                 <TableCell><ContactData>{rc.outcome}</ContactData></TableCell>
               </TableRow>))}
 
