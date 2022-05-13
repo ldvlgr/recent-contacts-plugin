@@ -1,6 +1,6 @@
 import React from 'react';
 import { Actions, VERSION, View } from '@twilio/flex-ui';
-import { FlexPlugin } from 'flex-plugin';
+import { FlexPlugin } from '@twilio/flex-plugin';
 
 import reducers, { namespace } from './states';
 import RecentContactsNavButton from './components/RecentContactsNavButton';
