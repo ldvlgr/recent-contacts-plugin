@@ -1,6 +1,6 @@
 import React from 'react';
 import { Actions, withTheme, IconButton } from '@twilio/flex-ui';
-//import RecentContacts from '../utils/RecentContacts';
+
 import { Actions as ContactHistoryActions } from '../states/ContactHistoryState';
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
@@ -17,14 +17,30 @@ import {
 } from "@material-ui/core";
 //import { withStyles } from "@material-ui/core/styles";
 
+const PLUGIN_NAME = 'RecentContactsPlugin';
+
 const ContactData = styled('div')`
   font-size: 12px;
 `;
 
 class ContactHistory extends React.Component {
+  
+  startContact = async (contact) => {
+    console.log(PLUGIN_NAME, contact);
+    if (contact.channel == "sms") {
+      //send SMS
+      console.log(PLUGIN_NAME, "Sending SMS");
+      //Needs implementation
+    } else if (contact.channel == "voice") {
+      //voice
+      console.log(PLUGIN_NAME, "Starting Outbound Call to", contact.number);
+      Actions.invokeAction("StartOutboundCall", {
+        destination: contact.number,
+      });
+    }
+  };
 
-
-  //let contacts = RecentContacts.getRecentContactsList();
+  
   render() {
     return (
       <div>
@@ -60,11 +76,10 @@ class ContactHistory extends React.Component {
                     disabled={rc.channel == 'chat'}
                     style={{ "color": "green" }}
                     title={rc.channel == 'voice' ? 'Call' : 'Message'}
-                    onClick={() => {
-                      Actions.invokeAction("StartOutboundCall", {
-                        destination: rc.number
-                      });
-                    }} />
+                      onClick={() =>
+                        this.startContact(rc)
+                      }
+                  />
 
                 </TableCell>
                 <TableCell><ContactData>{rc.channelType}</ContactData></TableCell>

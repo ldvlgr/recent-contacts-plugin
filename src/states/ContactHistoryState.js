@@ -1,6 +1,6 @@
 const ACTION_ADD_CONTACT = 'ADD_CONTACT';
 const ACTION_CLEAR_HISTORY = 'CLEAR_HISTORY';
-const MaxContacts = 5;
+const MaxContacts = 25;
 
 const initialState = {
   contactList: [],
