@@ -1,6 +1,6 @@
 import { Manager } from '@twilio/flex-ui';
 const RecentContactsKey = 'RECENT_CONTACTS';
-const MaxContacts = '15';
+const MaxContacts = '25';
 
 class RecentContacts {
   
@@ -13,7 +13,11 @@ class RecentContacts {
     }
   }
 
-  storeNewContact = (contact) => {
+  setContactList = (contactList) => {
+    localStorage.setItem(RecentContactsKey, JSON.stringify(contactList));
+  }
+
+  addNewContact = (contact) => {
     console.log('Adding Contact:', contact);
     const contactList = this.getRecentContactsList()
     //Add as first in list and limit to Max

@@ -4,8 +4,8 @@ import { FlexPlugin } from '@twilio/flex-plugin';
 
 import reducers, { namespace } from './states';
 import RecentContactsNavButton from './components/RecentContactsNavButton';
-// import RecentContactsView from './components/RecentContactsView';
-// import RecentContacts from './utils/RecentContacts';
+
+import RecentContacts from './utils/RecentContacts';
 
 import ContactHistory from './components/ContactHistoryView';
 import DispositionDialog from './components/DispositionDialog';
@@ -37,20 +37,18 @@ export default class RecentContactsPlugin extends FlexPlugin {
 
     // Add view to the ViewCollection
 
-    // Initial version using localStorage
-    // flex.ViewCollection.Content.add(
-    //   <View name="recent-contacts-view" key="recent-contacts-view">
-    //     <RecentContactsView key="co-recent-view" />
-    //   </View>
-    //);
-
-    // New view using Redux app state
     flex.ViewCollection.Content.add(
       <View name="recent-contacts-view" key="recent-contacts-view">
         <ContactHistory key="co-recent-view" />
       </View>
     );
-
+    //Init Redux from local storage
+    const contactList = RecentContacts.getRecentContactsList();
+    console.log(PLUGIN_NAME, 'Contact List from local storage:', contactList);
+    if (contactList && contactList.length > 0) {
+      console.log(PLUGIN_NAME, 'Adding contact list to Redux');
+      manager.store.dispatch(ContactHistoryActions.setContactList(contactList));
+    }
 
     flex.AgentDesktopView.Panel1.Content.add(<DispositionDialog
       key="disposition-modal"
@@ -83,12 +81,12 @@ export default class RecentContactsPlugin extends FlexPlugin {
     const dateTime = reservation.task.dateCreated.toLocaleString('en-US');
     const duration = reservation.task.age;
     //Enable caller name number lookup on phone number to populate name
-    const { direction, from, outbound_to, call_sid, caller_name, channelType, name } = reservation.task.attributes;
+    const { direction, from, outbound_to, call_sid, caller_name, channelType, name, channelSid } = reservation.task.attributes;
 
 
     let outcome = reservation.task.attributes?.conversations?.outcome || 'Completed';
 
-    let contact = { direction, channel, call_sid, dateTime, taskSid, queue, duration, outcome, channelType };
+    let contact = { direction, channel, call_sid, dateTime, taskSid, queue, duration, outcome, channelType, channelSid };
 
     //Default
     contact.name = 'Customer';
@@ -110,11 +108,11 @@ export default class RecentContactsPlugin extends FlexPlugin {
       contact.number = name;
     }
     console.log('UPDATED CONTACT OBJECT:', contact);
-    //Using localStorage
-    //RecentContacts.storeNewContact(contact);
+    //Using localStorage to persist contact list
+    RecentContacts.addNewContact(contact);
 
     //Using Redux app state
-    manager.store.dispatch(ContactHistoryActions.addContactToHistory(contact));
+    manager.store.dispatch(ContactHistoryActions.addContact(contact));
   }
 
 

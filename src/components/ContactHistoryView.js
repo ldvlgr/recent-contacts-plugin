@@ -1,9 +1,11 @@
 import React from 'react';
-import { Actions, withTheme, IconButton } from '@twilio/flex-ui';
+import { Actions, withTheme, IconButton, FlexBox } from '@twilio/flex-ui';
 
 import { Actions as ContactHistoryActions } from '../states/ContactHistoryState';
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
+import ChatTranscript from './ChatTranscript/ChatTranscript';
+import RecentContacts from '../utils/RecentContacts';
 
 import styled from 'react-emotion';
 import {
@@ -15,6 +17,8 @@ import {
   TableRow,
   TableCell,
 } from "@material-ui/core";
+import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
+
 //import { withStyles } from "@material-ui/core/styles";
 
 const PLUGIN_NAME = 'RecentContactsPlugin';
@@ -23,8 +27,16 @@ const ContactData = styled('div')`
   font-size: 12px;
 `;
 
+const INITIAL_STATE = {
+  selectedChannelSid: undefined
+};
+
 class ContactHistory extends React.Component {
-  
+  constructor(props) {
+    super(props);
+    this.state = INITIAL_STATE;
+  }
+
   startContact = async (contact) => {
     console.log(PLUGIN_NAME, contact);
     if (contact.channel == "sms") {
@@ -40,62 +52,91 @@ class ContactHistory extends React.Component {
     }
   };
 
-  
+  openTranscript = (channelSid) => {
+    this.setState({ selectedChannelSid: channelSid });
+    Actions.invokeAction('SetComponentState', {
+      name: 'ChatTranscript',
+      state: { isOpen: true }
+    });
+  }
+
+  resetChannel = () => {
+    this.setState(INITIAL_STATE);
+  }
+
+
   render() {
     return (
-      <div>
-        <Button
-          onClick={() => {
-            this.props.clearHistory();
-          }}
-        > CLEAR HISTORY </Button>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Channel</TableCell>
-              <TableCell>Type</TableCell>
-              <TableCell>Direction</TableCell>
-              <TableCell>Phone Number</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Date & Time</TableCell>
-              <TableCell align="center">Duration</TableCell>
-              <TableCell>Queue</TableCell>
-              <TableCell>Outcome</TableCell>
+      <FlexBox>
+        <FlexBox vertical>
 
-            </TableRow>
+          <Button
+            onClick={() => {
+              this.props.clearHistory();
+              RecentContacts.clearContactList();
+            }}
+          > CLEAR HISTORY </Button>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Channel</TableCell>
+                <TableCell>Type</TableCell>
+                <TableCell>Direction</TableCell>
+                <TableCell>Phone Number</TableCell>
+                <TableCell>Name</TableCell>
+                <TableCell>Date & Time</TableCell>
+                <TableCell align="center">Duration</TableCell>
+                <TableCell>Queue</TableCell>
+                <TableCell>Outcome</TableCell>
+                <TableCell>Transcript</TableCell>
+              </TableRow>
 
-          </TableHead>
-          <TableBody>
-            {this.props.contactList.map((rc) => (
+            </TableHead>
+            <TableBody>
+              {this.props.contactList.map((rc) => (
 
-              <TableRow key={rc.taskSid}>
-                <TableCell>
+                <TableRow key={rc.taskSid}>
+                  <TableCell>
 
-                  <IconButton
-                    icon={rc.channel == 'voice' ? 'Call' : 'Message'}
-                    disabled={rc.channel == 'chat'}
-                    style={{ "color": "green" }}
-                    title={rc.channel == 'voice' ? 'Call' : 'Message'}
+                    <IconButton
+                      icon={rc.channel == 'voice' ? 'Call' : 'Message'}
+                      disabled={rc.channel == 'chat'}
+                      style={{ "color": "green" }}
+                      title={rc.channel == 'voice' ? 'Call' : 'Message'}
                       onClick={() =>
                         this.startContact(rc)
                       }
-                  />
+                    />
 
-                </TableCell>
-                <TableCell><ContactData>{rc.channelType}</ContactData></TableCell>
-                <TableCell><ContactData>{rc.direction}</ContactData></TableCell>
-                <TableCell><ContactData>{rc.number}</ContactData></TableCell>
-                <TableCell><ContactData>{rc.name}</ContactData></TableCell>
-                <TableCell><ContactData>{rc.dateTime}</ContactData></TableCell>
-                <TableCell align="center"><ContactData>{rc.duration}</ContactData></TableCell>
-                <TableCell><ContactData>{rc.queue}</ContactData></TableCell>
-                <TableCell><ContactData>{rc.outcome}</ContactData></TableCell>
-              </TableRow>))}
+                  </TableCell>
+                  <TableCell><ContactData>{rc.channelType}</ContactData></TableCell>
+                  <TableCell><ContactData>{rc.direction}</ContactData></TableCell>
+                  <TableCell><ContactData>{rc.number}</ContactData></TableCell>
+                  <TableCell><ContactData>{rc.name}</ContactData></TableCell>
+                  <TableCell><ContactData>{rc.dateTime}</ContactData></TableCell>
+                  <TableCell align="center"><ContactData>{rc.duration}</ContactData></TableCell>
+                  <TableCell><ContactData>{rc.queue}</ContactData></TableCell>
+                  <TableCell><ContactData>{rc.outcome}</ContactData></TableCell>
+                  <TableCell>
+                    {rc.channel !== 'voice' &&
+                      <Button
+                        disabled={rc.channel == 'voice'}
+                        onClick={() => {
+                          this.openTranscript(rc.channelSid);
+                        }}
+                      > <QuestionAnswerIcon /> </Button>
+                    }
+                  </TableCell>
 
-          </TableBody>
 
-        </Table>
-      </div>
+                </TableRow>))}
+
+            </TableBody>
+
+          </Table>
+        </FlexBox>
+        <ChatTranscript key="chat-channel-transcript" channelSid={this.state.selectedChannelSid} resetChannel={this.resetChannel} />
+      </FlexBox>
     );
   };
 }
