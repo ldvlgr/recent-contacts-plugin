@@ -7,11 +7,13 @@ Twilio Flex Plugins allow you to customize the appearance and behavior of [Twili
 ## How it works
 This Flex plugin adds a Recent Contacts View to the Flex UI and allows agents to make outbound calls (click-to-dial) back to the customers. The recent contacts list is stored in the Redux state (and persisted in localStorage browser cache). The Max Number of Contacts retained is configurable and agents can clear their contact history by clicking the Clear History button.  For Chats the Conversation Transcript is available for review.
 
-![Contact History](images/RecentContacts.png)
+
+
+<img width="800px" src="images/recentContactsWithChatTranscript.png"/>
 
 This plugin also provides a modal Call Disposition window to agent after hangup (wrap up) to encourage agents to select the call outcome, before completing the call.  The outcome is saved in the task and displayed in the view.
 
-![Select Outcome-Disposition](images/outcomeDisposition.png)
+<img width="500px" src="images/outcomeDisposition.png"/>
 
 
 ## Setup
