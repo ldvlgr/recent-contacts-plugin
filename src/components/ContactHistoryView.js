@@ -19,10 +19,10 @@ import {
 } from "@material-ui/core";
 import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
 import CallIcon from '@material-ui/icons/Call';
-import CallMadeIcon from '@material-ui/icons/CallMade';
-import CallReceivedIcon from '@material-ui/icons/CallReceived';
 import SmartphoneIcon from '@material-ui/icons/Smartphone';
 import ChatIcon from '@material-ui/icons/Chat';
+import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
+import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 
 //import { withStyles } from "@material-ui/core/styles";
 
@@ -107,8 +107,8 @@ class ContactHistory extends React.Component {
                           this.startContact(rc);
                         }}
                       > <CallIcon />
-                        {rc.direction == 'inbound' && <CallReceivedIcon />}
-                        {rc.direction == 'outbound' && <CallMadeIcon />}
+                        {rc.direction == 'inbound' && <ArrowLeftIcon /> }
+                        {rc.direction == 'outbound' && <ArrowRightIcon />}
                       </Button>
                     }
 
