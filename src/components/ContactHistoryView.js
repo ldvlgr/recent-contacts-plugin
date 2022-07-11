@@ -18,6 +18,11 @@ import {
   TableCell,
 } from "@material-ui/core";
 import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
+import CallIcon from '@material-ui/icons/Call';
+import CallMadeIcon from '@material-ui/icons/CallMade';
+import CallReceivedIcon from '@material-ui/icons/CallReceived';
+import SmartphoneIcon from '@material-ui/icons/Smartphone';
+import ChatIcon from '@material-ui/icons/Chat';
 
 //import { withStyles } from "@material-ui/core/styles";
 
@@ -80,8 +85,6 @@ class ContactHistory extends React.Component {
             <TableHead>
               <TableRow>
                 <TableCell>Channel</TableCell>
-                <TableCell>Type</TableCell>
-                <TableCell>Direction</TableCell>
                 <TableCell>Phone Number</TableCell>
                 <TableCell>Name</TableCell>
                 <TableCell>Date & Time</TableCell>
@@ -97,20 +100,34 @@ class ContactHistory extends React.Component {
 
                 <TableRow key={rc.taskSid}>
                   <TableCell>
+                    {rc.channelType == 'voice' &&
+                      <Button
+                        title='Call'
+                        onClick={() => {
+                          this.startContact(rc);
+                        }}
+                      > <CallIcon />
+                        {rc.direction == 'inbound' && <CallReceivedIcon />}
+                        {rc.direction == 'outbound' && <CallMadeIcon />}
+                      </Button>
+                    }
 
-                    <IconButton
-                      icon={rc.channel == 'voice' ? 'Call' : 'Message'}
-                      disabled={rc.channel == 'chat'}
-                      style={{ "color": "green" }}
-                      title={rc.channel == 'voice' ? 'Call' : 'Message'}
-                      onClick={() =>
-                        this.startContact(rc)
-                      }
-                    />
+                    {rc.channelType == 'sms' &&
+                      <Button
+                        title='SMS'
+                        onClick={() => {
+                          this.startContact(rc);
+                        }}
+                      > <SmartphoneIcon /> </Button>
+                    }
+                    {rc.channelType == 'web' &&
+                      <Button
+                        title='WebChat'
+
+                      > <ChatIcon /> </Button>
+                    }
 
                   </TableCell>
-                  <TableCell><ContactData>{rc.channelType}</ContactData></TableCell>
-                  <TableCell><ContactData>{rc.direction}</ContactData></TableCell>
                   <TableCell><ContactData>{rc.number}</ContactData></TableCell>
                   <TableCell><ContactData>{rc.name}</ContactData></TableCell>
                   <TableCell><ContactData>{rc.dateTime}</ContactData></TableCell>
