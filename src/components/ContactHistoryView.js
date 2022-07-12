@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
 import ChatTranscript from './ChatTranscript/ChatTranscript';
 import RecentContacts from '../utils/RecentContacts';
-
+import Tooltip from '@material-ui/core/Tooltip';
 import styled from 'react-emotion';
 import {
   Button,
@@ -91,6 +91,7 @@ class ContactHistory extends React.Component {
                 <TableCell align="center">Duration</TableCell>
                 <TableCell>Queue</TableCell>
                 <TableCell>Outcome</TableCell>
+                <TableCell>Notes</TableCell>
                 <TableCell>Transcript</TableCell>
               </TableRow>
 
@@ -134,6 +135,11 @@ class ContactHistory extends React.Component {
                   <TableCell align="center"><ContactData>{rc.duration}</ContactData></TableCell>
                   <TableCell><ContactData>{rc.queue}</ContactData></TableCell>
                   <TableCell><ContactData>{rc.outcome}</ContactData></TableCell>
+                  <TableCell><ContactData>
+                  <Tooltip title={rc.notes} placement="bottom">
+                    <div>{rc.notes.substring(0,10)}...</div>
+                  </Tooltip>
+                  </ContactData></TableCell>
                   <TableCell>
                     {rc.channel !== 'voice' &&
                       <Button

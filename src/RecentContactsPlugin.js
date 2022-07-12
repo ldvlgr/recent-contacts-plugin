@@ -3,6 +3,7 @@ import { Actions, VERSION, View } from '@twilio/flex-ui';
 import { FlexPlugin } from '@twilio/flex-plugin';
 
 import reducers, { namespace } from './states';
+import AgentNotes from './components/AgentNotes/AgentNotes';
 import RecentContactsNavButton from './components/RecentContactsNavButton';
 
 import RecentContacts from './utils/RecentContacts';
@@ -28,7 +29,7 @@ export default class RecentContactsPlugin extends FlexPlugin {
    */
   init(flex, manager) {
     this.registerReducers(manager);
-
+    flex.AgentDesktopView.Panel2.Content.replace(<AgentNotes key="agent-notes" />);
 
     //Recent Contacts side nav button and new view
     flex.SideNav.Content.add(
@@ -81,12 +82,13 @@ export default class RecentContactsPlugin extends FlexPlugin {
     const dateTime = reservation.task.dateCreated.toLocaleString('en-US');
     const duration = reservation.task.age;
     //Enable caller name number lookup on phone number to populate name
-    const { direction, from, outbound_to, call_sid, caller_name, channelType, name, channelSid } = reservation.task.attributes;
+    const { direction, from, outbound_to, call_sid, caller_name, channelType, name, channelSid, conversations } = reservation.task.attributes;
 
 
     let outcome = reservation.task.attributes?.conversations?.outcome || 'Completed';
 
     let contact = { direction, channel, call_sid, dateTime, taskSid, queue, duration, outcome, channelType, channelSid };
+    contact.notes = conversations.content;
 
     //Default
     contact.name = 'Customer';
