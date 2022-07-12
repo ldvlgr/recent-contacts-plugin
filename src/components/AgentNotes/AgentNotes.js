@@ -150,7 +150,7 @@ class AgentNotes extends React.Component {
                   <AttributeName>Notes</AttributeName>
                 </NotesTableCell>
                 <TableCell>
-                  <textarea
+                  <textarea id="notes"
                     value={notes} onChange={this.handleChange}
                     rows="4" cols="40"
                   />
