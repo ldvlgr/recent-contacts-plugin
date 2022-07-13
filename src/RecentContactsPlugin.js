@@ -37,24 +37,17 @@ export default class RecentContactsPlugin extends FlexPlugin {
     );
 
     // Add view to the ViewCollection
-
     flex.ViewCollection.Content.add(
       <View name="recent-contacts-view" key="recent-contacts-view">
         <ContactHistory key="co-recent-view" />
       </View>
     );
     //Init Redux from local storage
-    const contactList = RecentContacts.getRecentContactsList();
-    console.log(PLUGIN_NAME, 'Contact List from local storage:', contactList);
-    if (contactList && contactList.length > 0) {
-      console.log(PLUGIN_NAME, 'Adding contact list to Redux');
-      manager.store.dispatch(ContactHistoryActions.setContactList(contactList));
-    }
+    RecentContacts.initContactHistory();
 
     flex.AgentDesktopView.Panel1.Content.add(<DispositionDialog
       key="disposition-modal"
     />, { sortOrder: 100 });
-
 
     manager.workerClient.on("reservationCreated", reservation => {
       console.log('reservationCreated: ', reservation);
@@ -67,58 +60,12 @@ export default class RecentContactsPlugin extends FlexPlugin {
       });
 
       reservation.on('completed', reservation => {
-        this.addContact(manager, reservation);
+        RecentContacts.addContact(reservation);
       });
     });
   }
 
-
-  addContact(manager, reservation) {
-    console.log('RESERVATION:', reservation);
-
-    const channel = reservation.task.taskChannelUniqueName;
-    const taskSid = reservation.task.sid;
-    const queue = reservation.task.queueName;
-    const dateTime = reservation.task.dateCreated.toLocaleString('en-US');
-    const duration = reservation.task.age;
-    //Enable caller name number lookup on phone number to populate name
-    const { direction, from, outbound_to, call_sid, caller_name, channelType, name, channelSid, conversations } = reservation.task.attributes;
-
-
-    let outcome = reservation.task.attributes?.conversations?.outcome || 'Completed';
-
-    let contact = { direction, channel, call_sid, dateTime, taskSid, queue, duration, outcome, channelType, channelSid };
-    contact.notes = conversations.content;
-
-    //Default
-    contact.name = 'Customer';
-
-    if (channel === 'voice') {
-      contact.channelType = channel;
-      if (caller_name) {
-        contact.name = caller_name;
-      }
-      if (direction === 'inbound') {
-        contact.number = from;
-      } else {
-        contact.number = outbound_to;
-      }
-    }
-    //For channelType = SMS, name will have phone number
-
-    if (channelType == 'sms') {
-      contact.number = name;
-    }
-    console.log('UPDATED CONTACT OBJECT:', contact);
-    //Using localStorage to persist contact list
-    RecentContacts.addNewContact(contact);
-
-    //Using Redux app state
-    manager.store.dispatch(ContactHistoryActions.addContact(contact));
-  }
-
-
-
+  
   /**
    * Registers the plugin reducers
    *
