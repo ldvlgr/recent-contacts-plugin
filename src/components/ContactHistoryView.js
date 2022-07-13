@@ -146,7 +146,7 @@ class ContactHistory extends React.Component {
                   </ContactData></TableCell>
                   <TableCell><ContactData>
                   <Tooltip title={rc.notes} placement="bottom">
-                    <div>{rc.notes.substring(0,10)}...</div>
+                    <div>{rc.notes? rc.notes.substring(0,10).concat('...'): ""} </div>
                   </Tooltip>
                   </ContactData></TableCell>
                   <TableCell>
