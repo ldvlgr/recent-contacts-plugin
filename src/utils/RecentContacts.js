@@ -41,11 +41,11 @@ class RecentContacts {
     const dateTime = reservation.task.dateCreated.toLocaleString('en-US');
     const duration = reservation.task.age;
     //Enable caller name number lookup on phone number to populate name
-    const { direction, from, outbound_to, call_sid, caller_name, channelType, name, channelSid, conversations } = reservation.task.attributes;
+    const { direction, from, outbound_to, call_sid, caller_name, channelType, name, channelSid, conversations, chatStatus } = reservation.task.attributes;
 
     let outcome = reservation.task.attributes?.conversations?.outcome || 'Completed';
 
-    let contact = { direction, channel, call_sid, dateTime, taskSid, queue, duration, outcome, channelType, channelSid };
+    let contact = { direction, channel, call_sid, dateTime, taskSid, queue, duration, outcome, channelType, channelSid, chatStatus };
     contact.notes = conversations.content;
 
     //Default

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Actions, withTheme, IconButton, FlexBox } from '@twilio/flex-ui';
+import { Actions, withTheme, FlexBox } from '@twilio/flex-ui';
 
 import { Actions as ContactHistoryActions } from '../states/ContactHistoryState';
 import { connect } from "react-redux";
@@ -11,7 +11,6 @@ import styled from 'react-emotion';
 import {
   Button,
   TableHead,
-  TableContainer,
   Table,
   TableBody,
   TableRow,
@@ -23,6 +22,8 @@ import SmartphoneIcon from '@material-ui/icons/Smartphone';
 import ChatIcon from '@material-ui/icons/Chat';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
+import PauseCircleOutlineIcon from '@material-ui/icons/PauseCircleOutline';
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 
 //import { withStyles } from "@material-ui/core/styles";
 
@@ -91,6 +92,7 @@ class ContactHistory extends React.Component {
                 <TableCell align="center">Duration</TableCell>
                 <TableCell>Queue</TableCell>
                 <TableCell>Outcome</TableCell>
+                <TableCell align="center">Status</TableCell>
                 <TableCell>Notes</TableCell>
                 <TableCell>Transcript</TableCell>
               </TableRow>
@@ -135,6 +137,13 @@ class ContactHistory extends React.Component {
                   <TableCell align="center"><ContactData>{rc.duration}</ContactData></TableCell>
                   <TableCell><ContactData>{rc.queue}</ContactData></TableCell>
                   <TableCell><ContactData>{rc.outcome}</ContactData></TableCell>
+                  <TableCell align="center"><ContactData>
+                  { rc.chatStatus == 'Pending' ?
+                       <Tooltip title='Pending SMS or Chat' placement="bottom">
+                         <PauseCircleOutlineIcon /></Tooltip> :
+                       <Tooltip title='Conversation Complete' placement="bottom">
+                       <CheckCircleOutlineIcon /></Tooltip> }
+                  </ContactData></TableCell>
                   <TableCell><ContactData>
                   <Tooltip title={rc.notes} placement="bottom">
                     <div>{rc.notes.substring(0,10)}...</div>

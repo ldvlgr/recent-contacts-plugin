@@ -3,6 +3,8 @@ import { Actions, VERSION, View } from '@twilio/flex-ui';
 import { FlexPlugin } from '@twilio/flex-plugin';
 
 import reducers, { namespace } from './states';
+import PendingButton from './components/PendingButton/PendingButton';
+
 import AgentNotes from './components/AgentNotes/AgentNotes';
 import RecentContactsNavButton from './components/RecentContactsNavButton';
 
@@ -10,8 +12,6 @@ import RecentContacts from './utils/RecentContacts';
 
 import ContactHistory from './components/ContactHistoryView';
 import DispositionDialog from './components/DispositionDialog';
-
-import { Actions as ContactHistoryActions } from './states/ContactHistoryState';
 
 const PLUGIN_NAME = 'RecentContactsPlugin';
 
@@ -29,6 +29,13 @@ export default class RecentContactsPlugin extends FlexPlugin {
    */
   init(flex, manager) {
     this.registerReducers(manager);
+
+    flex.TaskCanvasHeader.Content.add(<PendingButton key="chat-pending-button" />, {
+      sortOrder: 1,
+      if: (props) =>
+        props.channelDefinition.capabilities.has('Chat') && props.task.taskStatus === 'assigned',
+    });
+
     flex.AgentDesktopView.Panel2.Content.replace(<AgentNotes key="agent-notes" />);
 
     //Recent Contacts side nav button and new view

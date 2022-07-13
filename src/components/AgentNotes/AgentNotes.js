@@ -1,9 +1,8 @@
 import * as React from 'react';
 
-import { Actions, withTaskContext, Icon, TaskHelper, Manager, FlexBox } from '@twilio/flex-ui';
+import { withTaskContext, Icon, TaskHelper, Manager } from '@twilio/flex-ui';
 import { Button } from "@twilio/flex-ui-core";
 import {
-  Container,
   Caption,
   NotesTableCell,
   AttributeName,
@@ -12,14 +11,12 @@ import {
 } from './AgentNotes.styles';
 
 import {
-  TableHead,
   Table,
   TableBody,
   TableRow,
-  TableCell,
-  TextField
-} from "@material-ui/core";
+  TableCell} from "@material-ui/core";
 
+import { updateConversations } from '../../utils/taskUtil'
 let manager = Manager.getInstance();
 const PLUGIN_NAME = 'RecentContactsPlugin';
 
@@ -70,19 +67,12 @@ class AgentNotes extends React.Component {
 
     let task = this.props.task;
     if (task) {
-      let newAttributes = { ...task.attributes };
-      let conversations = task.attributes.conversations;
-      let newConv = {};
-      if (conversations) {
-        newConv = { ...conversations };
-      }
-      newConv.case = this.state.case_id;
-      newConv.conversation_attribute_10 = this.state.zipcode;
-      newConv.content = this.state.notes;
-      newAttributes.conversations = newConv;
-
-      await this.props.task.setAttributes(newAttributes);
-      console.log(PLUGIN_NAME, 'Task', task.sid, 'updated with', newAttributes);
+      let convData = {
+        case: this.state.case_id,
+        conversation_attribute_10: this.state.zipcode,
+        content: this.state.notes
+      };
+      await updateConversations(task, convData);
       this.setState({ changed: false });
 
       if (TaskHelper.isChatBasedTask(task)) {
