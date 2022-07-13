@@ -15,7 +15,11 @@ This plugin also provides a modal Call Disposition window to agent after hangup 
 
 <img width="500px" src="images/outcomeDisposition.png"/>
 
-NEW (July 2022): This plugin now also contains form in the CRM Panel where the agent can to capture notes about the conversation, the customer's case number and Zip Code. Notes are stored in the task attributes and as Chat Channel Attributes.
+NEW (July 2022): This plugin now also contains a form in the CRM Panel where the agent can to capture notes about the conversation, the customer's case number and Zip Code. Notes are stored in the task attributes and as Chat Channel Attributes.
+
+Furthermore, Chat and SMS conversations can be changed to "Pending" which updates the chat channel attribute long_lived = true and adds the workerName to the channel attributes.
+
+<img width="800px" src="images/PendingChatAgentNotes.png"/>
 
 ## Setup
 
