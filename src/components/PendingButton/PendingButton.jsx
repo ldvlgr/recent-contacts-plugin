@@ -8,7 +8,7 @@ const PLUGIN_NAME = 'RecentContactsPlugin';
 class PendingButton extends React.PureComponent {
 
 	onClickHandler = async () => {
-
+		
 		await updateTaskAttributes(this.props.task, { chatStatus: 'Pending'});
 		console.log('Change Chat to long lived', this.props.task);
 		
@@ -17,8 +17,8 @@ class PendingButton extends React.PureComponent {
 			.then(async (channel) => {
 				let channelAttributes = await channel.getAttributes();
 				console.log(PLUGIN_NAME, 'Channel Attributes:', channelAttributes);
-				
-				const newChanAttr = {...channelAttributes, long_lived:true};
+				let workerName = manager.workerClient.name; 
+				const newChanAttr = {...channelAttributes, workerName, long_lived:true};
 				console.log(PLUGIN_NAME, 'Updated Channel Attributes:', newChanAttr);
 				await channel.updateAttributes(newChanAttr);
 				console.log(PLUGIN_NAME, 'Wrapping Task/Reservation', this.props.task);
