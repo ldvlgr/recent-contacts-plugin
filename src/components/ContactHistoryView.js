@@ -145,9 +145,11 @@ class ContactHistory extends React.Component {
                        <CheckCircleOutlineIcon /></Tooltip> }
                   </ContactData></TableCell>
                   <TableCell><ContactData>
+                  {rc.notes &&
                   <Tooltip title={rc.notes} placement="bottom">
-                    <div>{rc.notes? rc.notes.substring(0,10).concat('...'): ""} </div>
+                    <div>{rc.notes.substring(0,10).concat('...')} </div>
                   </Tooltip>
+                  }
                   </ContactData></TableCell>
                   <TableCell>
                     {rc.channel !== 'voice' &&

@@ -24,6 +24,7 @@ const INITIAL_STATE = {
   case_id: '',
   zipcode: '',
   notes: '',
+  previousNotes: '',
   changed: false
 }
 
@@ -44,7 +45,8 @@ class AgentNotes extends React.Component {
           case_id: task.attributes?.conversations?.case || '',
           zipcode: task.attributes?.conversations?.conversation_attribute_10 || '',
           notes: task.attributes?.conversations?.content || '',
-        })
+          previousNotes: task.attributes?.previousNotes || ''
+        });
       } else {
         this.setState(INITIAL_STATE);
       }
@@ -53,7 +55,6 @@ class AgentNotes extends React.Component {
 
 
   handleChange = e => {
-    console.log('change event ', e.target);
     const value = e.target.value;
     //Text Field id needs to match State property
     const id = e.target.id;
@@ -81,7 +82,14 @@ class AgentNotes extends React.Component {
         manager.chatClient.getChannelBySid(channelSid)
           .then(async (channel) => {
             let channelAttributes = await channel.getAttributes();
-            const newChanAttr = { ...channelAttributes, notes: this.state.notes };
+            //Combine old and new notes
+            let newNotes = "";
+            if (this.state.previousNotes.length > 0) {
+              newNotes = this.state.previousNotes + " | " + this.state.notes;
+            } else {
+              newNotes = this.state.notes;
+            }
+            const newChanAttr = { ...channelAttributes, notes: newNotes, caseId: this.state.case_id };
             console.log(PLUGIN_NAME, 'Updated Channel Attributes:', newChanAttr);
             await channel.updateAttributes(newChanAttr);
 
@@ -96,8 +104,7 @@ class AgentNotes extends React.Component {
 
   render() {
     const { task } = this.props;
-    console.log(PLUGIN_NAME, 'Displaying task', task);
-    const { changed, case_id, zipcode, notes } = this.state;
+    const { changed, case_id, zipcode, notes, previousNotes } = this.state;
     return (
 
       <div>
@@ -134,7 +141,15 @@ class AgentNotes extends React.Component {
                   <AttributeTextField id='zipcode' value={zipcode} onChange={this.handleChange} />
                 </TableCell>
               </TableRow>
-
+              <TableRow key='previous-notes'>
+                <NotesTableCell>
+                  <AttributeName>Previous Notes</AttributeName>
+                </NotesTableCell>
+                <TableCell>
+                  {previousNotes}
+                    
+                </TableCell>
+              </TableRow>
               <TableRow key='notes'>
                 <NotesTableCell>
                   <AttributeName>Notes</AttributeName>

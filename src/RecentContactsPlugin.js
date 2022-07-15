@@ -12,6 +12,7 @@ import RecentContacts from './utils/RecentContacts';
 
 import ContactHistory from './components/ContactHistoryView';
 import DispositionDialog from './components/DispositionDialog';
+import { updateTaskAndConversationsAttributes } from './utils/taskUtil'
 
 const PLUGIN_NAME = 'RecentContactsPlugin';
 
@@ -56,8 +57,25 @@ export default class RecentContactsPlugin extends FlexPlugin {
       key="disposition-modal"
     />, { sortOrder: 100 });
 
-    manager.workerClient.on("reservationCreated", reservation => {
-      console.log('reservationCreated: ', reservation);
+    manager.workerClient.on("reservationCreated", async (reservation) => {
+      console.log(PLUGIN_NAME, 'reservationCreated: ', reservation);
+
+      //get previous notes from channel...
+      let channelSid = reservation.task?.attributes?.channelSid;
+      if (channelSid) {
+        const channel = await manager.chatClient.getChannelBySid(channelSid);
+        if (channel) {
+          let channelAttributes = await channel.getAttributes();
+          console.log(PLUGIN_NAME, 'Channel Attributes:', channelAttributes);
+          if (channelAttributes.long_lived && channelAttributes.notes) {
+            let newAttr = {};
+            let convData = {}
+            if (channelAttributes.notes) newAttr.previousNotes = channelAttributes.notes;
+            if (channelAttributes.caseId) convData.case = channelAttributes.caseId ;
+            await updateTaskAndConversationsAttributes(reservation.task, newAttr, convData);
+          }
+        }
+      }
 
       reservation.on('wrapup', reservation => {
         Actions.invokeAction('SetComponentState', {
@@ -72,7 +90,7 @@ export default class RecentContactsPlugin extends FlexPlugin {
     });
   }
 
-  
+
   /**
    * Registers the plugin reducers
    *
