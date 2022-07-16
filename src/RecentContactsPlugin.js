@@ -57,25 +57,33 @@ export default class RecentContactsPlugin extends FlexPlugin {
       key="disposition-modal"
     />, { sortOrder: 100 });
 
-    manager.workerClient.on("reservationCreated", async (reservation) => {
+    manager.workerClient.on("reservationCreated", (reservation) => {
       console.log(PLUGIN_NAME, 'reservationCreated: ', reservation);
 
-      //get previous notes from channel...
-      let channelSid = reservation.task?.attributes?.channelSid;
-      if (channelSid) {
-        const channel = await manager.chatClient.getChannelBySid(channelSid);
-        if (channel) {
-          let channelAttributes = await channel.getAttributes();
-          console.log(PLUGIN_NAME, 'Channel Attributes:', channelAttributes);
-          if (channelAttributes.long_lived && channelAttributes.notes) {
-            let newAttr = {};
-            let convData = {}
-            if (channelAttributes.notes) newAttr.previousNotes = channelAttributes.notes;
-            if (channelAttributes.caseId) convData.case = channelAttributes.caseId ;
-            await updateTaskAndConversationsAttributes(reservation.task, newAttr, convData);
+      reservation.on('accepted', async (reservation) => {
+        console.log(PLUGIN_NAME, 'Reservation Accepted: ', reservation);
+        //get previous notes from channel...
+        let channelSid = reservation.task?.attributes?.channelSid;
+        if (channelSid) {
+          try {
+            const channel = await manager.chatClient.getChannelBySid(channelSid);
+            console.log(PLUGIN_NAME, 'Found Channel:', channel);
+            if (channel) {
+              let channelAttributes = await channel.getAttributes();
+              console.log(PLUGIN_NAME, 'Channel Attributes:', channelAttributes);
+              if (channelAttributes.long_lived) {
+                let newAttr = {};
+                let convData = {}
+                if (channelAttributes.notes) newAttr.previousNotes = channelAttributes.notes;
+                if (channelAttributes.caseId) convData.case = channelAttributes.caseId;
+                await updateTaskAndConversationsAttributes(reservation.task, newAttr, convData);
+              }
+            }
+          } catch (e) {
+            console.log(PLUGIN_NAME, 'getChannel failed', e);
           }
         }
-      }
+      });
 
       reservation.on('wrapup', reservation => {
         Actions.invokeAction('SetComponentState', {
