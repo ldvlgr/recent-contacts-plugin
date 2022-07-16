@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Actions, withTheme, Manager, SidePanel, FlexBox, MessagingCanvas } from '@twilio/flex-ui';
+import { Actions, withTheme, Manager, SidePanel, FlexBox, MessagingCanvas, MessageList } from '@twilio/flex-ui';
 import {
   Container,
   Caption,
@@ -46,13 +46,15 @@ class ChatTranscript extends React.Component {
         handleCloseClick={this.handleClose}
       >
         <Container vertical>
-          <MessagingCanvas
+          {this.props.channelSid ?
+           <MessagingCanvas
             sid={this.props.channelSid}
             autoInitChannel={true} // Must do this to see the messages!
             showWelcomeMessage={false}
             inputDisabledReason='Chat History'
-          />
-
+          /> 
+        :
+        <Caption>Select Conversation</Caption>}
         </Container>
       </SidePanel >
 

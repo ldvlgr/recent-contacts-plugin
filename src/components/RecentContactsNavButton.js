@@ -4,6 +4,10 @@ import { SideLink, Actions } from '@twilio/flex-ui';
 const RecentContactsNavButton = ({ activeView }) => {
    function navigate() {
        Actions.invokeAction('NavigateToView', { viewName: 'recent-contacts-view'});
+       Actions.invokeAction('SetComponentState', {
+        name: 'ChatTranscript',
+        state: { isOpen: false }
+      });
    }
  
    return (
