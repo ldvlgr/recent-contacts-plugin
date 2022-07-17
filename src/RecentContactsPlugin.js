@@ -62,27 +62,26 @@ export default class RecentContactsPlugin extends FlexPlugin {
 
       reservation.on('accepted', async (reservation) => {
         console.log(PLUGIN_NAME, 'Reservation Accepted: ', reservation);
-        //get previous notes from channel...
-        let channelSid = reservation.task?.attributes?.channelSid;
-        if (channelSid) {
+       
+        // https://media.twiliocdn.com/sdk/js/chat/releases/3.2.4/docs/Client.html#event:channelAdded
+        // Fired when a Channel becomes visible to the Client. 
+        // Fired for created and not joined private channels and for all type of channels Client has joined or invited to.
+        manager.chatClient.on("channelAdded", async (channel) => {
           try {
-            const channel = await manager.chatClient.getChannelBySid(channelSid);
-            console.log(PLUGIN_NAME, 'Found Channel:', channel);
-            if (channel) {
-              let channelAttributes = await channel.getAttributes();
-              console.log(PLUGIN_NAME, 'Channel Attributes:', channelAttributes);
-              if (channelAttributes.long_lived) {
-                let newAttr = {};
-                let convData = {}
-                if (channelAttributes.notes) newAttr.previousNotes = channelAttributes.notes;
-                if (channelAttributes.caseId) convData.case = channelAttributes.caseId;
-                await updateTaskAndConversationsAttributes(reservation.task, newAttr, convData);
-              }
+            console.log(PLUGIN_NAME, 'Channel Added.');
+            let channelAttributes = await channel.getAttributes();
+            console.log(PLUGIN_NAME, 'Channel Added. Got Channel Attributes:', channelAttributes);
+            if (channelAttributes.long_lived) {
+              let newAttr = {};
+              let convData = {}
+              if (channelAttributes.notes) newAttr.previousNotes = channelAttributes.notes;
+              if (channelAttributes.caseId) convData.case = channelAttributes.caseId;
+              await updateTaskAndConversationsAttributes(reservation.task, newAttr, convData);
             }
           } catch (e) {
             console.log(PLUGIN_NAME, 'getChannel failed', e);
           }
-        }
+        });
       });
 
       reservation.on('wrapup', reservation => {
