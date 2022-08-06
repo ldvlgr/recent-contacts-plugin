@@ -5,8 +5,9 @@
 Twilio Flex Plugins allow you to customize the appearance and behavior of [Twilio Flex](https://www.twilio.com/flex). If you want to learn more about the capabilities and how to use the API, check out our [Flex documentation](https://www.twilio.com/docs/flex).
 
 ## How it works
-This Flex plugin adds a Recent Contacts View to the Flex UI and allows agents to make outbound calls (click-to-dial) back to the customers. The recent contacts list is stored in the Redux state (and persisted in localStorage browser cache). The Max Number of Contacts retained is configurable and agents can clear their contact history by clicking the Clear History button.  For Chats the Conversation Transcript is available for review.
+This Flex plugin adds a Recent Contacts View to the Flex UI and allows agents to make outbound calls (click-to-dial) back to the customers. The recent contacts list is stored in the Redux state (and persisted in localStorage browser cache). The Max Number of Contacts retained is configurable and agents can clear their contact history by clicking the Clear History button.  
 
+Note: Upgrade to Flex UI 2.0 in progress.  Updated source for Flex UI 2.0 can found in -v2 folder.
 
 
 <img width="800px" src="images/recentContactsWithChatTranscript.png"/>
@@ -17,7 +18,7 @@ This plugin also provides a modal Call Disposition window to agent after hangup 
 
 NEW (July 2022): This plugin now also contains a form in the CRM Panel where the agent can to capture notes about the conversation, the customer's case number and Zip Code. Notes are stored in the task attributes and as Chat Channel Attributes.
 
-Furthermore, Chat and SMS conversations can be changed to "Pending" which updates the chat channel attribute long_lived = true and adds the workerName to the channel attributes.
+Furthermore, Chat and SMS conversations can be changed to "Pending" which updates the chat channel attribute long_lived = true and adds the workerName to the channel attributes. (Flex 1.x only)
 
 <img width="800px" src="images/PendingChatAgentNotes.png"/>
 
