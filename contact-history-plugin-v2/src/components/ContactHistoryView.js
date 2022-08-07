@@ -19,7 +19,7 @@ import { SMSCapableIcon } from "@twilio-paste/icons/esm/SMSCapableIcon";
 const PLUGIN_NAME = 'RecentContactsPlugin';
 
 const INITIAL_STATE = {
-  selectedChannelSid: undefined
+  selectedConvoSid: undefined
 };
 
 class ContactHistory extends React.Component {
@@ -43,8 +43,8 @@ class ContactHistory extends React.Component {
     }
   };
 
-  openTranscript = (channelSid) => {
-    this.setState({ selectedChannelSid: channelSid });
+  openTranscript = (convoSid) => {
+    this.setState({ selectedConvoSid: convoSid });
     Actions.invokeAction('SetComponentState', {
       name: 'ChatTranscript',
       state: { isOpen: true }
@@ -138,7 +138,7 @@ class ContactHistory extends React.Component {
                         <Button variant="link" size="small"
                           disabled={rc.channel == 'voice'}
                           onClick={() => {
-                            this.openTranscript(rc.channelSid);
+                            this.openTranscript(rc.conversationSid);
                           }}
                         > 
                         <SMSCapableIcon decorative={false} title="Chat Transcript" />
@@ -149,7 +149,7 @@ class ContactHistory extends React.Component {
               </TBody>
             </Table>
           </Flex>
-          <ChatTranscript key="chat-channel-transcript" channelSid={this.state.selectedChannelSid} resetChannel={this.resetChannel} />
+          <ChatTranscript key="chat-transcript" conversationSid={this.state.selectedConvoSid} resetChannel={this.resetChannel} />
         </Flex>
       </Theme.Provider>
     );

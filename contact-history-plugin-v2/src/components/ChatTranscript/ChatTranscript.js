@@ -26,8 +26,8 @@ class ChatTranscript extends React.Component {
 
 
   render() {
-    const { isOpen, channelSid, theme } = this.props;
-
+    const { isOpen, conversationSid } = this.props;
+    console.log(PLUGIN_NAME, 'Transcript for:', conversationSid );
     return (
       <Theme.Provider theme="flex">
 
@@ -40,9 +40,9 @@ class ChatTranscript extends React.Component {
         >
           <Flex vertical>
             <Box>
-              {this.props.channelSid ?
+              {this.props.conversationSid ?
                 <MessagingCanvas
-                  sid={this.props.channelSid}
+                  sid={this.props.conversationSid}
                   autoInitChannel={true} // Must do this to see the messages!
                   showWelcomeMessage={false}
                   inputDisabledReason='Chat History'

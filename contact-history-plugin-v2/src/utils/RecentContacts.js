@@ -41,11 +41,11 @@ class RecentContacts {
     const dateTime = reservation.task.dateCreated.toLocaleString('en-US');
     const duration = reservation.task.age;
     //Enable caller name number lookup on phone number to populate name
-    const { direction, from, outbound_to, call_sid, caller_name, channelType, name, channelSid, conversations, chatStatus } = reservation.task.attributes;
+    const { direction, from, outbound_to, call_sid, caller_name, channelType, customerAddress, conversationSid, conversations, chatStatus } = reservation.task.attributes;
 
     let outcome = reservation.task.attributes?.conversations?.outcome || 'Completed';
 
-    let contact = { direction, channel, call_sid, dateTime, taskSid, queue, duration, outcome, channelType, channelSid, chatStatus };
+    let contact = { direction, channel, call_sid, dateTime, taskSid, queue, duration, outcome, channelType, conversationSid, chatStatus };
     contact.notes = conversations.content;
 
     //Default
@@ -62,10 +62,10 @@ class RecentContacts {
         contact.number = outbound_to;
       }
     }
-    //For channelType = SMS, name will have phone number
+    //For channelType = SMS, customerAddress will have phone number
 
     if (channelType == 'sms') {
-      contact.number = name;
+      contact.number = customerAddress;
     }
     console.log(PLUGIN_NAME, 'UPDATED CONTACT OBJECT:', contact);
     //Using localStorage to persist contact list
@@ -80,15 +80,6 @@ class RecentContacts {
 
   }
 
-
-  // addNewContact = (contact) => {
-  //   console.log('Adding Contact:', contact);
-  //   const contactList = this.getRecentContactsList()
-  //   //Add as first in list and limit to Max
-  //   const newList = [contact].concat(contactList).slice(0, MaxContacts);
-  //   console.log('Updated Contact List:', newList);
-  //   localStorage.setItem(RecentContactsKey, JSON.stringify(newList));
-  // }
 
   clearContactList = () => {
     localStorage.removeItem(RecentContactsKey);

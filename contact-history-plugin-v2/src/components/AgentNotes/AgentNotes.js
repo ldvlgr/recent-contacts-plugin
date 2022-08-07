@@ -66,10 +66,10 @@ class AgentNotes extends React.Component {
 
       if (TaskHelper.isChatBasedTask(task)) {
         //Update channel
-        let channelSid = this.props.task.attributes.channelSid;
-        manager.chatClient.getChannelBySid(channelSid)
-          .then(async (channel) => {
-            let channelAttributes = await channel.getAttributes();
+        let conversationSid = this.props.task.attributes.conversationSid;
+        manager.conversationsClient.getConversationBySid(conversationSid)
+          .then(async (conversation) => {
+            let convoAttributes = await conversation.getAttributes();
             //Combine old and new notes
             let newNotes = "";
             if (this.state.previousNotes.length > 0) {
@@ -77,9 +77,9 @@ class AgentNotes extends React.Component {
             } else {
               newNotes = this.state.notes;
             }
-            const newChanAttr = { ...channelAttributes, notes: newNotes, caseId: this.state.case_id };
-            console.log(PLUGIN_NAME, 'Updated Channel Attributes:', newChanAttr);
-            await channel.updateAttributes(newChanAttr);
+            const newConvoAttr = { ...convoAttributes, notes: newNotes, caseId: this.state.case_id };
+            console.log(PLUGIN_NAME, 'Updated Conversation Attributes:', newConvoAttr);
+            await conversation.updateAttributes(newConvoAttr);
 
           });
       }
