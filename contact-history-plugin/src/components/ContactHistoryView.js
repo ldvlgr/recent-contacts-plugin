@@ -20,6 +20,7 @@ import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
 import CallIcon from '@material-ui/icons/Call';
 import SmartphoneIcon from '@material-ui/icons/Smartphone';
 import ChatIcon from '@material-ui/icons/Chat';
+import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import PauseCircleOutlineIcon from '@material-ui/icons/PauseCircleOutline';
@@ -126,10 +127,13 @@ class ContactHistory extends React.Component {
                     {rc.channelType == 'web' &&
                       <Button
                         title='WebChat'
-
                       > <ChatIcon /> </Button>
                     }
-
+                    {rc.channelType == 'custom' &&
+                      <Button
+                        title='Custom Chat'
+                      > <ChatBubbleOutlineIcon /> </Button>
+                    }
                   </TableCell>
                   <TableCell><ContactData>{rc.number}</ContactData></TableCell>
                   <TableCell><ContactData>{rc.name}</ContactData></TableCell>

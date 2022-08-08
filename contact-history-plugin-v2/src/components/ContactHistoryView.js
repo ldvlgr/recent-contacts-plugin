@@ -15,6 +15,7 @@ import { ArrowForwardIcon } from "@twilio-paste/icons/esm/ArrowForwardIcon";
 import { CheckboxCheckIcon } from "@twilio-paste/icons/esm/CheckboxCheckIcon";
 import { PauseIcon } from "@twilio-paste/icons/esm/PauseIcon";
 import { SMSCapableIcon } from "@twilio-paste/icons/esm/SMSCapableIcon";
+import { ProductChatIcon } from "@twilio-paste/icons/esm/ProductChatIcon";
 
 const PLUGIN_NAME = 'RecentContactsPlugin';
 
@@ -62,7 +63,7 @@ class ContactHistory extends React.Component {
         <Flex>
           <Flex vertical>
             <Box padding="space40">
-              <Button variant="primary" 
+              <Button variant="primary"
                 onClick={() => {
                   this.props.clearHistory();
                   RecentContacts.clearContactList();
@@ -90,29 +91,35 @@ class ContactHistory extends React.Component {
 
                   <Tr key={rc.taskSid}>
                     <Td textAlign="center">
-                      {rc.channelType == 'voice' &&
-                        <Button variant="link" size="small"
-                          title='Call'
-                          onClick={() => {
-                            this.startContact(rc);
-                          }}
-                        > <Icon icon='Call' />
-                          {rc.direction == 'inbound' && <ArrowBackIcon decorative={false} title="Incoming" />}
-                          {rc.direction == 'outbound' && <ArrowForwardIcon decorative={false} title="Outgoing" />}
-                        </Button>
-                      }
-                      {rc.channelType == 'sms' &&
-                        <Button variant="link" size="small"
-                          title='SMS'
-                          onClick={() => {
-                            this.startContact(rc);
-                          }}
-                        > <Icon icon='Sms' /> </Button>
-                      }
-                      {rc.channelType == 'web' &&
-                        <Icon icon='Message' />
-                      }
-
+                      <Flex hAlignContent="center">
+                        <Box>
+                          {rc.channelType == 'voice' &&
+                            <Button variant="link" size="small"
+                              title='Call'
+                              onClick={() => {
+                                this.startContact(rc);
+                              }}
+                            > <Icon icon='Call' />
+                              {rc.direction == 'inbound' && <ArrowBackIcon decorative={false} title="Incoming" />}
+                              {rc.direction == 'outbound' && <ArrowForwardIcon decorative={false} title="Outgoing" />}
+                            </Button>
+                          }
+                          {rc.channelType == 'sms' &&
+                            <Button variant="link" size="small"
+                              title='SMS'
+                              onClick={() => {
+                                this.startContact(rc);
+                              }}
+                            > <Icon icon='Sms' /> </Button>
+                          }
+                          {rc.channelType == 'web' &&
+                            <Icon icon='Message' />
+                          }
+                          {rc.channelType == 'custom' &&
+                            <ProductChatIcon decorative={false} title="Custom Chat" />
+                          }
+                        </Box>
+                      </Flex>
                     </Td>
                     <Td>{rc.number}</Td>
                     <Td>{rc.name}</Td>
