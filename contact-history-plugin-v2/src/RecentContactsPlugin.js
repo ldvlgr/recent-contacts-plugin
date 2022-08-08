@@ -31,11 +31,13 @@ export default class RecentContactsPlugin extends FlexPlugin {
   init(flex, manager) {
     this.registerReducers(manager);
 
-    flex.TaskCanvasHeader.Content.add(<PendingButton key="chat-pending-button" />, {
-      sortOrder: 1,
-      if: (props) =>
-        props.channelDefinition.capabilities.has('Chat') && props.task.taskStatus === 'assigned',
-    });
+    // Disable Pending/pause button since long_lived is deprecated
+    // See other plugins or docs on how to implement "Parked" interactions
+    // flex.TaskCanvasHeader.Content.add(<PendingButton key="chat-pending-button" />, {
+    //   sortOrder: 1,
+    //   if: (props) =>
+    //     props.channelDefinition.capabilities.has('Chat') && props.task.taskStatus === 'assigned',
+    // });
 
     flex.AgentDesktopView.Panel2.Content.replace(<AgentNotes key="agent-notes" />);
 

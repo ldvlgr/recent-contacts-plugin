@@ -81,7 +81,7 @@ class ContactHistory extends React.Component {
                   <Th>Outcome</Th>
                   <Th align="center">Status</Th>
                   <Th>Notes</Th>
-                  <Th>Transcript</Th>
+                  {/* <Th>Transcript</Th> */}
                 </Tr>
 
               </THead>
@@ -133,7 +133,7 @@ class ContactHistory extends React.Component {
                         </Tooltip>
                       }
                     </Td>
-                    <Td textAlign="center">
+                    {/* <Td textAlign="center">
                       {rc.channel !== 'voice' &&
                         <Button variant="link" size="small"
                           disabled={rc.channel == 'voice'}
@@ -144,7 +144,7 @@ class ContactHistory extends React.Component {
                         <SMSCapableIcon decorative={false} title="Chat Transcript" />
                          </Button>
                       }
-                    </Td>
+                    </Td> */}
                   </Tr>))}
               </TBody>
             </Table>
