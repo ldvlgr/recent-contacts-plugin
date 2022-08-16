@@ -26,6 +26,8 @@ import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import PauseCircleOutlineIcon from '@material-ui/icons/PauseCircleOutline';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 
+import Paper from '@material-ui/core/Paper';
+
 //import { withStyles } from "@material-ui/core/styles";
 
 const PLUGIN_NAME = 'RecentContactsPlugin';
@@ -76,13 +78,13 @@ class ContactHistory extends React.Component {
     return (
       <FlexBox>
         <FlexBox vertical>
-
           <Button
             onClick={() => {
               this.props.clearHistory();
               RecentContacts.clearContactList();
             }}
           > CLEAR HISTORY </Button>
+          <Paper elevation={0} style={{ maxHeight: '100%', overflow: 'auto', margin: '6px' }}>
           <Table>
             <TableHead>
               <TableRow>
@@ -165,13 +167,10 @@ class ContactHistory extends React.Component {
                       > <QuestionAnswerIcon /> </Button>
                     }
                   </TableCell>
-
-
                 </TableRow>))}
-
             </TableBody>
-
           </Table>
+          </Paper>
         </FlexBox>
         <ChatTranscript key="chat-channel-transcript" channelSid={this.state.selectedChannelSid} resetChannel={this.resetChannel} />
       </FlexBox>
