@@ -13,6 +13,7 @@ import RecentContacts from './utils/RecentContacts';
 import ContactHistory from './components/ContactHistoryView';
 import DispositionDialog from './components/DispositionDialog';
 import { updateTaskAndConversationsAttributes } from './utils/taskUtil'
+import registerNotifications from "./utils/notifications";
 
 const PLUGIN_NAME = 'RecentContactsPlugin';
 
@@ -30,7 +31,8 @@ export default class RecentContactsPlugin extends FlexPlugin {
    */
   init(flex, manager) {
     this.registerReducers(manager);
-
+    registerNotifications(manager);
+    
     // Disable Pending/pause button since long_lived is deprecated
     // See other plugins or docs on how to implement "Parked" interactions
     // flex.TaskCanvasHeader.Content.add(<PendingButton key="chat-pending-button" />, {

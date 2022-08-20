@@ -15,42 +15,21 @@ import {
 
 } from './ChatTranscript.styles';
 
-import ChatUtil from '../../utils/ChatUtil';
-
 const PLUGIN_NAME = 'RecentContactsPlugin';
-
-const INITIAL_STATE = { messages: [], fiendlyName: 'Loading...', channelType: '' };
 
 //NEW SidePanel
 class ChatTranscript extends React.Component {
   constructor(props) {
     super(props);
-    this.state = INITIAL_STATE
   }
 
   handleClose = () => {
-    this.setState(INITIAL_STATE);
+    this.props.resetChannel();
     Actions.invokeAction('SetComponentState', {
       name: 'ChatTranscript',
       state: { isOpen: false }
     });
   }
-
-  async componentDidUpdate(prevProps) {
-    // Typical usage (don't forget to compare props):
-    if (this.props.channelSid && this.props.channelSid !== prevProps.channelSid) {
-      //Get Chat messages and init component state
-      const channelSid = this.props.channelSid;
-      let chatData = await ChatUtil.getMessages(channelSid);
-
-      this.setState({
-        messages: chatData.messages,
-        fiendlyName: chatData.chat_friendly_name,
-        channelType: chatData.channel_type
-      })
-    }
-  }
-
 
   render() {
     const { isOpen, channelSid } = this.props;
@@ -63,18 +42,19 @@ class ChatTranscript extends React.Component {
         isHidden={!isOpen}
         handleCloseClick={this.handleClose}
       >
-        <Caption>{this.state.fiendlyName}</Caption>
-        <Paper elevation={2} style={{ height: 'auto', maxHeight: 600, overflow: 'auto', margin: '6px 12px' }}>
-          <div>
-            {this.state.messages.map((m) => {
-              let dt = new Date(m.date).toLocaleTimeString('en-US');
-              return (<div>
+        <Caption>{this.props.chatFriendlyName}</Caption>
+        {this.props.messages &&
+          <Paper elevation={2} style={{ height: 'auto', maxHeight: 600, overflow: 'auto', margin: '6px 12px' }}>
+            <div>
+              {this.props.messages.map((m) => {
+                let dt = new Date(m.date).toLocaleTimeString('en-US');
+                return (<div key={"msg-" + m.index + dt}>
                   {m.member_name == "Customer" &&
                     <MessageBoxCustomer key={m.index}>
                       <MessageBubbleCustomer>
                         <MessageFrom>{m.member_name + " (" + dt + ")"}</MessageFrom>
                         <MessageBody>{m.body}</MessageBody>
-                        
+
                       </MessageBubbleCustomer>
                     </MessageBoxCustomer>}
 
@@ -86,10 +66,11 @@ class ChatTranscript extends React.Component {
                       </MessageBubbleAgent>
                     </MessageBoxAgent>}
                 </div>)
-            }
-            )}
-          </div>
-        </Paper>
+              }
+              )}
+            </div>
+          </Paper>
+        }
 
       </SidePanel >
     );

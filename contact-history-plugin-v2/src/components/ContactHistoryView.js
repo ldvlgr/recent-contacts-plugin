@@ -17,10 +17,14 @@ import { PauseIcon } from "@twilio-paste/icons/esm/PauseIcon";
 import { SMSCapableIcon } from "@twilio-paste/icons/esm/SMSCapableIcon";
 import { ProductChatIcon } from "@twilio-paste/icons/esm/ProductChatIcon";
 
+import ConversationUtil from '../utils/ConversationUtil';
+
 const PLUGIN_NAME = 'RecentContactsPlugin';
 
 const INITIAL_STATE = {
-  selectedConvoSid: undefined
+  selectedConversationSid: undefined,
+  messages: [],
+  conversationFriendlyName: ""
 };
 
 class ContactHistory extends React.Component {
@@ -44,15 +48,22 @@ class ContactHistory extends React.Component {
     }
   };
 
-  openTranscript = (convoSid) => {
-    this.setState({ selectedConvoSid: convoSid });
+  openTranscript = async (conversationSid) => {
     Actions.invokeAction('SetComponentState', {
       name: 'ChatTranscript',
       state: { isOpen: true }
     });
+    
+    const convoData = await ConversationUtil.getConversation(conversationSid);
+    let messages = convoData.messages;
+    let conversationFriendlyName = convoData.friendly_name;
+    if (!messages) conversationFriendlyName = "Not Available";
+    //if no data show notification
+    this.setState({ selectedConvoSid: conversationSid, messages, conversationFriendlyName });
+    
   }
 
-  resetChannel = () => {
+  resetConversation = () => {
     this.setState(INITIAL_STATE);
   }
 
@@ -82,7 +93,7 @@ class ContactHistory extends React.Component {
                   <Th>Outcome</Th>
                   <Th align="center">Status</Th>
                   <Th>Notes</Th>
-                  {/* <Th>Transcript</Th> */}
+                  <Th>Transcript</Th>
                 </Tr>
 
               </THead>
@@ -140,7 +151,7 @@ class ContactHistory extends React.Component {
                         </Tooltip>
                       }
                     </Td>
-                    {/* <Td textAlign="center">
+                    <Td textAlign="center">
                       {rc.channel !== 'voice' &&
                         <Button variant="link" size="small"
                           disabled={rc.channel == 'voice'}
@@ -151,12 +162,16 @@ class ContactHistory extends React.Component {
                         <SMSCapableIcon decorative={false} title="Chat Transcript" />
                          </Button>
                       }
-                    </Td> */}
+                    </Td>
                   </Tr>))}
               </TBody>
             </Table>
           </Flex>
-          <ChatTranscript key="chat-transcript" conversationSid={this.state.selectedConvoSid} resetChannel={this.resetChannel} />
+          <ChatTranscript key="chat-transcript" 
+          conversationSid={this.state.selectedConversationSid} 
+          conversationFriendlyName={this.state.conversationFriendlyName} 
+          messages={this.state.messages} 
+          resetConversation={this.resetConversation} />
         </Flex>
       </Theme.Provider>
     );

@@ -1,58 +1,78 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Actions, withTheme, SidePanel, MessagingCanvas } from '@twilio/flex-ui';
+import { Actions, withTheme, SidePanel } from '@twilio/flex-ui';
 
-import { Theme } from '@twilio-paste/core/theme';
-import { Flex, Box, Text } from "@twilio-paste/core";
+import Paper from '@material-ui/core/Paper';
+
+import {
+  Caption,
+  MessageBoxAgent,
+  MessageBoxCustomer,
+  MessageBubbleAgent,
+  MessageBubbleCustomer,
+  MessageBody,
+  MessageFrom
+
+} from './ChatTranscript.styles';
+
 
 const PLUGIN_NAME = 'RecentContactsPlugin';
 
-const INITIAL_STATE = {};
-
-//NEW SidePanel
 class ChatTranscript extends React.Component {
   constructor(props) {
     super(props);
-    this.state = INITIAL_STATE
   }
 
   handleClose = () => {
-    this.setState(INITIAL_STATE);
+    this.props.resetConversation();
     Actions.invokeAction('SetComponentState', {
       name: 'ChatTranscript',
       state: { isOpen: false }
     });
   }
 
-
   render() {
-    const { isOpen, conversationSid } = this.props;
-    console.log(PLUGIN_NAME, 'Transcript for:', conversationSid );
-    return (
-      <Theme.Provider theme="flex">
+    const { isOpen } = this.props;
 
-        <SidePanel
-          displayName="ChatTranscriptPanel"
-          className="chatTranscript"
-          title={<div>Chat Transcript</div>}
-          isHidden={!isOpen}
-          handleCloseClick={this.handleClose}
-        >
-          <Flex vertical>
-            <Box>
-              {this.props.conversationSid ?
-                <MessagingCanvas
-                  sid={this.props.conversationSid}
-                  autoInitChannel={true} // Must do this to see the messages!
-                  showWelcomeMessage={false}
-                  inputDisabledReason='Chat History'
-                />
-                :
-                <Text>Select Conversation</Text>}
-            </Box>
-          </Flex>
-        </SidePanel >
-      </Theme.Provider>
+    return (
+
+      <SidePanel
+        displayName="ChatTranscriptPanel"
+        title={<div>Chat Transcript</div>}
+        isHidden={!isOpen}
+        handleCloseClick={this.handleClose}
+      >
+        <Caption>{this.props.conversationFriendlyName}</Caption>
+        {this.props.messages &&
+          <Paper elevation={2} style={{ height: 'auto', maxHeight: 600, overflow: 'auto', margin: '6px 12px' }}>
+            <div>
+              {this.props.messages.map((m) => {
+                let dt = new Date(m.date).toLocaleTimeString('en-US');
+                return (<div key={"msg-" + m.index + dt}>
+                  {m.author.includes('+') &&
+                    <MessageBoxCustomer key={m.index}>
+                      <MessageBubbleCustomer>
+                        <MessageFrom>{m.author + " (" + dt + ")"}</MessageFrom>
+                        <MessageBody>{m.body}</MessageBody>
+
+                      </MessageBubbleCustomer>
+                    </MessageBoxCustomer>}
+
+                  {!m.author.includes('+') &&
+                    <MessageBoxAgent key={m.index}>
+                      <MessageBubbleAgent>
+                        <MessageFrom>{m.author + " (" + dt + ")"}</MessageFrom>
+                        <MessageBody>{m.body}</MessageBody>
+                      </MessageBubbleAgent>
+                    </MessageBoxAgent>}
+                </div>)
+              }
+              )}
+            </div>
+          </Paper>
+        }
+
+      </SidePanel >
     );
   }
 }

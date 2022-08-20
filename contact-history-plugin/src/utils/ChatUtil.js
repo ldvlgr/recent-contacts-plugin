@@ -1,4 +1,4 @@
-import { Manager } from '@twilio/flex-ui';
+import { Manager, Notifications } from '@twilio/flex-ui';
 const manager = Manager.getInstance();
 const PLUGIN_NAME = 'RecentContactsPlugin';
 
@@ -26,6 +26,7 @@ class ChatUtil {
       console.log(PLUGIN_NAME, 'Chat Data:',chatData )
     } catch (error) {
       console.error(PLUGIN_NAME, 'Failed to get messages');
+      Notifications.showNotification("UnableToGetChat")
     }
     return chatData;
   }
