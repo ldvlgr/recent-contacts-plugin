@@ -36,7 +36,8 @@ export default class RecentContactsPlugin extends FlexPlugin {
     flex.TaskCanvasHeader.Content.add(<PendingButton key="chat-pending-button" />, {
       sortOrder: 1,
       if: (props) =>
-        props.channelDefinition.capabilities.has('Chat') && props.task.taskStatus === 'assigned',
+        props.task.attributes.channelType == "sms"
+        && props.task.taskStatus === 'assigned',
     });
 
     flex.AgentDesktopView.Panel2.Content.replace(<AgentNotes key="agent-notes" />);
