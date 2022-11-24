@@ -8,8 +8,8 @@ import ChatTranscript from './ChatTranscript/ChatTranscript';
 import RecentContacts from '../utils/RecentContacts';
 import Tooltip from '@material-ui/core/Tooltip';
 import styled from 'react-emotion';
+import { Button } from "@twilio/flex-ui-core";
 import {
-  Button,
   TableHead,
   Table,
   TableBody,
@@ -85,10 +85,14 @@ class ContactHistory extends React.Component {
 
 
   render() {
+    const { theme } = this.props;
+    //console.log('THEME: ', theme);
     return (
       <FlexBox>
         <FlexBox vertical>
           <Button
+          themeOverride={theme.WorkerSkills.SaveButton}
+          roundCorners={false}
             onClick={() => {
               this.props.clearHistory();
               RecentContacts.clearContactList();

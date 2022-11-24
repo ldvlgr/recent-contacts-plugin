@@ -10,11 +10,12 @@
     "@emotion/styled": "^10.0.27",
     "react": "16.5.2",
     "react-dom": "16.5.2",
-    "@twilio/flex-plugin-scripts": "5.0.6",
+    "@twilio/flex-plugin-scripts": "6.0.3",
     "react-emotion": "9.2.12"
   },
   "devDependencies": {
     "@twilio/flex-ui": "^1",
+    "@twilio/flex-ui-core": "0.59.0",
     "react-test-renderer": "16.5.2"
   }
 }

@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { withTaskContext, Icon, TaskHelper, Manager } from '@twilio/flex-ui';
+import { withTaskContext, withTheme, Icon, TaskHelper, Manager } from '@twilio/flex-ui';
 import { Button } from "@twilio/flex-ui-core";
 import {
   Caption,
@@ -103,7 +103,7 @@ class AgentNotes extends React.Component {
 
 
   render() {
-    const { task } = this.props;
+    const { task, theme } = this.props;
     const { changed, case_id, zipcode, notes, previousNotes } = this.state;
     return (
 
@@ -162,17 +162,13 @@ class AgentNotes extends React.Component {
                 </TableCell>
               </TableRow>
             </TableBody>
-
           </Table>
-
-
-
 
           <ButtonsContainer>
             <Button
               id="saveButton"
               onClick={this.saveAttributes}
-
+              themeOverride={theme.WorkerSkills.SaveButton}
               roundCorners={false}
               disabled={!changed}
             >
@@ -189,4 +185,4 @@ class AgentNotes extends React.Component {
 
 
 
-export default withTaskContext(AgentNotes);
+export default withTheme(withTaskContext(AgentNotes));
