@@ -41,7 +41,19 @@ class RecentContacts {
     const dateTime = reservation.task.dateCreated.toLocaleString('en-US');
     const duration = reservation.task.age;
     //Enable caller name number lookup on phone number to populate name
-    const { direction, from, outbound_to, call_sid, caller_name, channelType, name, channelSid, conversations, chatStatus } = reservation.task.attributes;
+    const { 
+      direction, 
+      from, 
+      outbound_to, 
+      call_sid, 
+      caller_name, 
+      channelType, 
+      name, 
+      channelSid, 
+      conversations, 
+      chatStatus,
+      customerName 
+    } = reservation.task.attributes;
 
     let outcome = reservation.task.attributes?.conversations?.outcome || 'Completed';
 
@@ -49,7 +61,7 @@ class RecentContacts {
     contact.notes = conversations.content;
 
     //Default
-    contact.name = 'Customer';
+    contact.name = customerName || "Customer";
 
     if (channel === 'voice') {
       contact.channelType = channel;

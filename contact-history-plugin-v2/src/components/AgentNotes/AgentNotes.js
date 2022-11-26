@@ -4,11 +4,12 @@ import { withTaskContext, withTheme, Icon, TaskHelper, Manager } from '@twilio/f
 import { Theme } from '@twilio-paste/core/theme';
 import { Button, Input, Flex, Box, Label, Text, TextArea, Table, THead, TBody, Th, Tr, Td } from "@twilio-paste/core";
 
-import { updateConversations } from '../../utils/taskUtil'
+import { updateTaskAndConversationsAttributes } from '../../utils/taskUtil'
 let manager = Manager.getInstance();
 const PLUGIN_NAME = 'RecentContactsPlugin';
 
 const INITIAL_STATE = {
+  customerName: '',
   case_id: '',
   zipcode: '',
   notes: '',
@@ -30,6 +31,7 @@ class AgentNotes extends React.Component {
       const task = this.props.task;
       if (task) {
         this.setState({
+          customerName: task.attributes?.customerName || '',
           case_id: task.attributes?.conversations?.case || '',
           zipcode: task.attributes?.conversations?.conversation_attribute_10 || '',
           notes: task.attributes?.conversations?.content || '',
@@ -61,7 +63,8 @@ class AgentNotes extends React.Component {
         conversation_attribute_10: this.state.zipcode,
         content: this.state.notes
       };
-      await updateConversations(task, convData);
+      let newTaskAttr = { customerName: this.state.customerName };
+      await updateTaskAndConversationsAttributes(task, newTaskAttr, convData);
       this.setState({ changed: false });
 
       if (TaskHelper.isChatBasedTask(task)) {
@@ -77,7 +80,12 @@ class AgentNotes extends React.Component {
             } else {
               newNotes = this.state.notes;
             }
-            const newConvoAttr = { ...convoAttributes, notes: newNotes, caseId: this.state.case_id };
+            const newConvoAttr = { 
+              ...convoAttributes, 
+              notes: newNotes, 
+              caseId: this.state.case_id,
+              customerName: this.state.customerName 
+            };
             console.log(PLUGIN_NAME, 'Updated Conversation Attributes:', newConvoAttr);
             await conversation.updateAttributes(newConvoAttr);
 
@@ -89,7 +97,7 @@ class AgentNotes extends React.Component {
 
   render() {
     const { task } = this.props;
-    const { changed, case_id, zipcode, notes, previousNotes } = this.state;
+    const { changed, case_id, zipcode, notes, previousNotes, customerName } = this.state;
     return (
       <Theme.Provider theme="flex">
         <Flex>
@@ -112,6 +120,14 @@ class AgentNotes extends React.Component {
                   <Tr key="task_sid">
                     <Th scope="row"> Task </Th>
                     <Td> {task ? task.sid : 'No Active Task'} </Td>
+                  </Tr>
+                  <Tr key='customerName'>
+                    <Th scope="row">
+                      <Label htmlFor="customerName">Customer Name</Label>
+                    </Th>
+                    <Td>
+                      <Input id='customerName' value={customerName} onChange={this.handleChange} />
+                    </Td>
                   </Tr>
                   <Tr key='case_id'>
                     <Th scope="row">

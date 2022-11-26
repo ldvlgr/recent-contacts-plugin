@@ -1,19 +1,11 @@
-import React from 'react';
-import { Actions, VERSION, View } from '@twilio/flex-ui';
+import { Actions, VERSION } from '@twilio/flex-ui';
 import { FlexPlugin } from '@twilio/flex-plugin';
-
 import reducers, { namespace } from './states';
-import PendingButton from './components/PendingButton/PendingButton';
-
-import AgentNotes from './components/AgentNotes/AgentNotes';
-import RecentContactsNavButton from './components/RecentContactsNavButton';
-
+import ConfigureFlexStrings from './strings';
+import CustomizeFlexComponents from './components';
 import RecentContacts from './utils/RecentContacts';
-
-import ContactHistory from './components/ContactHistoryView';
-import DispositionDialog from './components/DispositionDialog';
-import { updateTaskAndConversationsAttributes } from './utils/taskUtil'
 import registerNotifications from "./utils/notifications";
+import registerEventListeners from "./event-listeners";
 
 const PLUGIN_NAME = 'RecentContactsPlugin';
 
@@ -32,70 +24,13 @@ export default class RecentContactsPlugin extends FlexPlugin {
   init(flex, manager) {
     this.registerReducers(manager);
     registerNotifications(manager);
-    
-    // Disable Pending/pause button since long_lived is deprecated
-    // See other plugins or docs on how to implement "Parked" interactions
-    // flex.TaskCanvasHeader.Content.add(<PendingButton key="chat-pending-button" />, {
-    //   sortOrder: 1,
-    //   if: (props) =>
-    //     props.channelDefinition.capabilities.has('Chat') && props.task.taskStatus === 'assigned',
-    // });
+    CustomizeFlexComponents(manager);
+    ConfigureFlexStrings(manager);
+    registerEventListeners(manager);
 
-    flex.AgentDesktopView.Panel2.Content.replace(<AgentNotes key="agent-notes" />);
-
-    //Recent Contacts side nav button and new view
-    flex.SideNav.Content.add(
-      <RecentContactsNavButton key="recent-contacts-sidenav-button" />, { sortOrder: 2 }
-    );
-
-    // Add view to the ViewCollection
-    flex.ViewCollection.Content.add(
-      <View name="recent-contacts-view" key="recent-contacts-view">
-        <ContactHistory key="co-recent-view" />
-      </View>
-    );
     //Init Redux from local storage
     RecentContacts.initContactHistory();
 
-    flex.AgentDesktopView.Panel1.Content.add(<DispositionDialog
-      key="disposition-modal"
-    />, { sortOrder: 100 });
-
-    manager.workerClient.on("reservationCreated", (reservation) => {
-      console.log(PLUGIN_NAME, 'reservationCreated: ', reservation);
-
-      reservation.on('accepted', async (reservation) => {
-        console.log(PLUGIN_NAME, 'Reservation Accepted: ', reservation);
-
-        manager.conversationsClient.on("conversationAdded", async (conversation) => {
-          try {
-            console.log(PLUGIN_NAME, 'Conversation Added.');
-            let convoAttributes = await conversation.getAttributes();
-            console.log(PLUGIN_NAME, 'Conversation Added. Got Attributes:', convoAttributes);
-            // TODO: How to check if this was a parked/pending conversation
-            // let newAttr = {};
-            // let convData = {}
-            // if (convoAttributes.notes) newAttr.previousNotes = convoAttributes.notes;
-            // if (convoAttributes.caseId) convData.case = convoAttributes.caseId;
-            // await updateTaskAndConversationsAttributes(reservation.task, newAttr, convData);
-
-          } catch (e) {
-            console.log(PLUGIN_NAME, 'getChannel failed', e);
-          }
-        });
-      });
-
-      reservation.on('wrapup', reservation => {
-        Actions.invokeAction('SetComponentState', {
-          name: 'DispositionDialog',
-          state: { isOpen: true }
-        });
-      });
-
-      reservation.on('completed', reservation => {
-        RecentContacts.addContact(reservation);
-      });
-    });
   }
 
 
