@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Actions, withTheme } from '@twilio/flex-ui';
 
 import { Actions as ContactHistoryActions } from '../states/ContactHistoryState';
@@ -15,19 +15,12 @@ import ConversationUtil from '../utils/ConversationUtil';
 
 const PLUGIN_NAME = 'RecentContactsPlugin';
 
-const INITIAL_STATE = {
-  selectedConversationSid: undefined,
-  messages: [],
-  conversationFriendlyName: ""
-};
+const ContactHistory = (props) => {
+  const [selectedConversationSid, setSelectedConversationSid] = useState();
+  const [messages, setMessages] = useState([]);
+  const [conversationFriendlyName, setConversationFriendlyName] = useState('');
 
-class ContactHistory extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = INITIAL_STATE;
-  }
-
-  startContact = async (contact) => {
+  const startContact = async (contact) => {
     console.log(PLUGIN_NAME, contact);
     if (contact.channel == "sms") {
       //send SMS
@@ -42,71 +35,72 @@ class ContactHistory extends React.Component {
     }
   };
 
-  openTranscript = async (conversationSid) => {
+  const openTranscript = async (conversationSid) => {
     Actions.invokeAction('SetComponentState', {
       name: 'ChatTranscript',
       state: { isOpen: true }
     });
-    
+
     const convoData = await ConversationUtil.getConversation(conversationSid);
     let messages = convoData.messages;
     let conversationFriendlyName = convoData.friendly_name;
     if (!messages) conversationFriendlyName = "Not Available";
     //if no data show notification
-    this.setState({ selectedConvoSid: conversationSid, messages, conversationFriendlyName });
-    
+    setSelectedConversationSid(conversationSid);
+    setMessages(messages);
+    setConversationFriendlyName(conversationFriendlyName);
   }
 
-  resetConversation = () => {
-    this.setState(INITIAL_STATE);
+  const resetConversation = () => {
+    setSelectedConversationSid(undefined);
+    setMessages([]);
+    setConversationFriendlyName('');
   }
 
+  return (
+    <Theme.Provider theme="flex">
+      <Flex>
+        <Flex vertical >
+          <Box padding="space40">
+            <Button variant="primary"
+              onClick={() => {
+                props.clearHistory();
+                RecentContacts.clearContactList();
+              }}
+            > Clear History </Button>
+          </Box>
+          <Table>
+            <THead>
+              <Tr>
+                <Th>Channel</Th>
+                <Th>Phone Number</Th>
+                <Th>Name</Th>
+                <Th>Date & Time</Th>
+                <Th align="center">Duration</Th>
+                <Th>Queue</Th>
+                <Th>Outcome</Th>
+                <Th align="center">Status</Th>
+                <Th>Notes</Th>
+                <Th>Transcript</Th>
+              </Tr>
 
-  render() {
-    return (
-      <Theme.Provider theme="flex">
-        <Flex>
-          <Flex vertical>
-            <Box padding="space40">
-              <Button variant="primary"
-                onClick={() => {
-                  this.props.clearHistory();
-                  RecentContacts.clearContactList();
-                }}
-              > Clear History </Button>
-            </Box>
-            <Table>
-              <THead>
-                <Tr>
-                  <Th>Channel</Th>
-                  <Th>Phone Number</Th>
-                  <Th>Name</Th>
-                  <Th>Date & Time</Th>
-                  <Th align="center">Duration</Th>
-                  <Th>Queue</Th>
-                  <Th>Outcome</Th>
-                  <Th align="center">Status</Th>
-                  <Th>Notes</Th>
-                  <Th>Transcript</Th>
-                </Tr>
-
-              </THead>
-              <TBody>
-                {this.props.contactList.map((rc) => (
-                  <ContactRecord rc={rc} startContact={this.startContact} openTranscript={this.openTranscript} />
-                  )) }
-              </TBody>
-            </Table>
-          </Flex>
-          <ChatTranscript key="chat-transcript" 
-          conversationSid={this.state.selectedConversationSid} 
-          conversationFriendlyName={this.state.conversationFriendlyName} 
-          messages={this.state.messages} 
-          resetConversation={this.resetConversation} />
+            </THead>
+            <TBody>
+              {props.contactList.map((rc) => (
+                <ContactRecord rc={rc} startContact={startContact} openTranscript={openTranscript} />
+              ))}
+            </TBody>
+          </Table>
         </Flex>
-      </Theme.Provider>
-    );
-  };
+        <ChatTranscript key="chat-transcript"
+          conversationSid={selectedConversationSid}
+          conversationFriendlyName={conversationFriendlyName}
+          messages={messages}
+          resetConversation={resetConversation} />
+      </Flex>
+    </Theme.Provider>
+  );
+
 }
 
 
