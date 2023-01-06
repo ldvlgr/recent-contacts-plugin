@@ -1,5 +1,5 @@
 import React from 'react';
-import { Actions, withTheme, Icon } from '@twilio/flex-ui';
+import { Actions, withTheme } from '@twilio/flex-ui';
 
 import { Actions as ContactHistoryActions } from '../states/ContactHistoryState';
 import { connect } from "react-redux";
@@ -8,15 +8,9 @@ import ChatTranscript from './ChatTranscript/ChatTranscript';
 import RecentContacts from '../utils/RecentContacts';
 
 import { Theme } from '@twilio-paste/core/theme';
-import { Button, Flex, Box, Label, Text, Tooltip, Table, THead, TBody, Th, Tr, Td } from "@twilio-paste/core";
+import { Button, Flex, Box, Table, THead, TBody, Th, Tr } from "@twilio-paste/core";
 
-import { ArrowBackIcon } from "@twilio-paste/icons/esm/ArrowBackIcon";
-import { ArrowForwardIcon } from "@twilio-paste/icons/esm/ArrowForwardIcon";
-import { CheckboxCheckIcon } from "@twilio-paste/icons/esm/CheckboxCheckIcon";
-import { PauseIcon } from "@twilio-paste/icons/esm/PauseIcon";
-import { SMSCapableIcon } from "@twilio-paste/icons/esm/SMSCapableIcon";
-import { ProductChatIcon } from "@twilio-paste/icons/esm/ProductChatIcon";
-
+import ContactRecord from './ContactRecord';
 import ConversationUtil from '../utils/ConversationUtil';
 
 const PLUGIN_NAME = 'RecentContactsPlugin';
@@ -99,71 +93,8 @@ class ContactHistory extends React.Component {
               </THead>
               <TBody>
                 {this.props.contactList.map((rc) => (
-
-                  <Tr key={rc.taskSid}>
-                    <Td textAlign="center">
-                      <Flex hAlignContent="center">
-                        <Box>
-                          {rc.channelType == 'voice' &&
-                            <Button variant="link" size="small"
-                              title='Call'
-                              onClick={() => {
-                                this.startContact(rc);
-                              }}
-                            > <Icon icon='Call' />
-                              {rc.direction == 'inbound' && <ArrowBackIcon decorative={false} title="Incoming" />}
-                              {rc.direction == 'outbound' && <ArrowForwardIcon decorative={false} title="Outgoing" />}
-                            </Button>
-                          }
-                          {rc.channelType == 'sms' &&
-                            <Button variant="link" size="small"
-                              title='SMS'
-                              onClick={() => {
-                                this.startContact(rc);
-                              }}
-                            > <Icon icon='Sms' /> </Button>
-                          }
-                          {rc.channelType == 'web' &&
-                            <Icon icon='Message' />
-                          }
-                          {rc.channelType == 'custom' &&
-                            <ProductChatIcon decorative={false} title="Custom Chat" />
-                          }
-                        </Box>
-                      </Flex>
-                    </Td>
-                    <Td>{rc.number}</Td>
-                    <Td>{rc.name}</Td>
-                    <Td>{rc.dateTime}</Td>
-                    <Td textAlign="center">{rc.duration}</Td>
-                    <Td>{rc.queue}</Td>
-                    <Td>{rc.outcome}</Td>
-                    <Td textAlign="center">
-                      {rc.chatStatus == 'Pending' ?
-                        <PauseIcon decorative={false} title="Pending/Parked" /> :
-                        <CheckboxCheckIcon decorative={false} title="Completed" />
-                      }
-                    </Td>
-                    <Td>
-                      {rc.notes &&
-                        <Tooltip text={rc.notes} placement="bottom">
-                          <Text>{rc.notes.substring(0, 10).concat('...')} </Text>
-                        </Tooltip>
-                      }
-                    </Td>
-                    <Td textAlign="center">
-                      {rc.channel !== 'voice' &&
-                        <Button variant="link" size="small"
-                          disabled={rc.channel == 'voice'}
-                          onClick={() => {
-                            this.openTranscript(rc.conversationSid);
-                          }}
-                        > 
-                        <SMSCapableIcon decorative={false} title="Chat Transcript" />
-                         </Button>
-                      }
-                    </Td>
-                  </Tr>))}
+                  <ContactRecord rc={rc} startContact={this.startContact} openTranscript={this.openTranscript} />
+                  )) }
               </TBody>
             </Table>
           </Flex>
