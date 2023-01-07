@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Actions, withTheme } from '@twilio/flex-ui';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Actions as ContactHistoryActions } from '../states/ContactHistoryState';
-import { connect } from "react-redux";
-import { bindActionCreators } from 'redux';
 import ChatTranscript from './ChatTranscript/ChatTranscript';
 import RecentContacts from '../utils/RecentContacts';
 
@@ -15,10 +14,17 @@ import ConversationUtil from '../utils/ConversationUtil';
 
 const PLUGIN_NAME = 'RecentContactsPlugin';
 
-const ContactHistory = (props) => {
+const ContactHistory = () => {
   const [selectedConversationSid, setSelectedConversationSid] = useState();
   const [messages, setMessages] = useState([]);
   const [conversationFriendlyName, setConversationFriendlyName] = useState('');
+
+  const contactData = useSelector(
+    state => { return {contactList: state['recent-contacts']?.contactHistory?.contactList }; }
+  );
+  //console.log(PLUGIN_NAME, 'contactData:', contactData);
+  let contactList = contactData?.contactList || [];
+  const dispatch = useDispatch();
 
   const startContact = async (contact) => {
     console.log(PLUGIN_NAME, contact);
@@ -57,16 +63,18 @@ const ContactHistory = (props) => {
     setConversationFriendlyName('');
   }
 
+const clearHistory = ()=> {
+  dispatch(ContactHistoryActions.clearHistory());
+  RecentContacts.clearContactList();
+}
+
   return (
     <Theme.Provider theme="flex">
       <Flex>
         <Flex vertical >
           <Box padding="space40">
             <Button variant="primary"
-              onClick={() => {
-                props.clearHistory();
-                RecentContacts.clearContactList();
-              }}
+              onClick={clearHistory}
             > Clear History </Button>
           </Box>
           <Table>
@@ -86,7 +94,7 @@ const ContactHistory = (props) => {
 
             </THead>
             <TBody>
-              {props.contactList.map((rc) => (
+              {contactList?.map((rc) => (
                 <ContactRecord rc={rc} startContact={startContact} openTranscript={openTranscript} />
               ))}
             </TBody>
@@ -103,15 +111,4 @@ const ContactHistory = (props) => {
 
 }
 
-
-const mapStateToProps = state => {
-  return {
-    contactList: state['recent-contacts']?.contactHistory?.contactList
-  };
-}
-
-const mapDispatchToProps = (dispatch) => ({
-  clearHistory: bindActionCreators(ContactHistoryActions.clearHistory, dispatch),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(withTheme(ContactHistory));
+export default withTheme(ContactHistory);
