@@ -1,115 +1,117 @@
-import * as React from 'react';
-import { connect } from 'react-redux';
+import React, { useState } from 'react';
 import { Actions, withTheme, withTaskContext } from '@twilio/flex-ui';
+import { useSelector } from 'react-redux';
 
 import { Theme } from '@twilio-paste/core/theme';
 import { Modal, ModalBody, ModalFooter, ModalFooterActions, ModalHeader, ModalHeading } from '@twilio-paste/core/modal';
 import { Button, Text, Select, Option } from "@twilio-paste/core";
 
 const DefaultDisposition = 'DEFAULT';
+const outcomes = [
+  'New Order',
+  'Order Updated',
+  'Product Inquiry',
+  'Cancel Service',
+  'Change Service',
+  'Membership Renewal',
+  'Refund Requested',
+  'Product Replacement',
+  'Extend Warranty'];
 
-class DispositionDialog extends React.Component {
-  state = {
-    callDisposition: DefaultDisposition,
-    options: ['Completed', 'NewOrder', 'OrderUpdated', 'Inquiry', 'CancelService', 'ChangeService', 'Renewal', 'FollowUp', 'CallBack']
+const DispositionDialog = ({ task }) => {
+  const [disposition, setDisposition] = useState(DefaultDisposition);
+  const isOpen = useSelector(
+    state => {
+      const componentViewStates = state.flex.view.componentViewStates;
+      const dispositionDialogState = componentViewStates && componentViewStates.DispositionDialog;
+      return dispositionDialogState && dispositionDialogState.isOpen;
+    }
+  );
+
+  const handleClose = () => {
+    closeDialog();
   }
 
-  handleClose = () => {
-    this.closeDialog();
-  }
-
-  closeDialog = () => {
+  const closeDialog = () => {
     Actions.invokeAction('SetComponentState', {
       name: 'DispositionDialog',
       state: { isOpen: false }
     });
   }
 
-  handleChange = e => {
+  const handleChange = e => {
     const value = e.target.value;
-    this.setState({ callDisposition: value });
+    setDisposition( value );
   }
 
-  handleSaveDisposition = async () => {
+  const handleSaveDisposition = async () => {
     //save disposition
     console.log('Saving call disposition');
-    console.log('task: ', this.props.task);
-    let dispValue = this.state.callDisposition
-    if (dispValue != DefaultDisposition) {
-      let newAttributes = { ...this.props.task.attributes };
-      newAttributes.disposition = dispValue;
+    console.log('task: ', task);
+    if (disposition != DefaultDisposition) {
+      let newAttributes = { ...task.attributes };
+      newAttributes.disposition = disposition;
       //insights outcome
-      let conversations = this.props.task.attributes.conversations;
+      let conversations = task.attributes.conversations;
       let newConv = {};
       if (conversations) {
         newConv = { ...conversations };
       }
-      newConv.outcome = dispValue;
+      newConv.outcome = disposition;
       newAttributes.conversations = newConv;
 
-      await this.props.task.setAttributes(newAttributes);
+      await task.setAttributes(newAttributes);
       //clear disposition
-      this.setState({ callDisposition: DefaultDisposition });
-      this.closeDialog();
+      setDisposition(DefaultDisposition);
+      closeDialog();
     }
 
   }
 
-  render() {
-    return (
-      <Theme.Provider theme="flex">
-        <Modal
-          isOpen={this.props.isOpen || false}
-          onDismiss={this.handleClose}
-        >
-          <ModalHeader>
-            <ModalHeading as="h3" id='disposition'>
-              Select Conversation Outcome/Disposition.
-            </ModalHeading>
-          </ModalHeader>
+  return (
+    <Theme.Provider theme="flex">
+      <Modal
+        isOpen={isOpen || false}
+        onDismiss={handleClose}
+      >
+        <ModalHeader>
+          <ModalHeading as="h3" id='disposition'>
+            Select Conversation Outcome/Disposition.
+          </ModalHeading>
+        </ModalHeader>
 
-          <ModalBody>
-            <Text>
+        <ModalBody>
+          <Text>
             Please choose the appropriate outcome/disposition value for this completed conversation.
-            </Text>
-            <Select
-              value={this.state.callDisposition}
-              onChange={this.handleChange}
-              name="disposition"
+          </Text>
+          <Select
+            value={disposition}
+            onChange={handleChange}
+            name="disposition"
+          >
+            <Option value={DefaultDisposition}>SELECT DISPOSITION</Option>
+            {outcomes.map((option) => (
+              <Option
+                key={option}
+                value={option}
+              > {option}
+              </Option>
+            ))}
+          </Select>
+        </ModalBody>
+        <ModalFooter>
+          <ModalFooterActions>
+            <Button
+              onClick={handleSaveDisposition}
+              variant="primary" size="small"
             >
-              <Option value={DefaultDisposition}>SELECT DISPOSITION</Option>
-              {this.state.options.map((option) => (
-                <Option
-                  key={option}
-                  value={option}
-                > {option}
-                </Option>
-              ))}
-            </Select>
-          </ModalBody>
-          <ModalFooter>
-            <ModalFooterActions>
-              <Button
-                onClick={this.handleSaveDisposition}
-                variant="primary" size="small"
-              >
-                Save
-              </Button>
-            </ModalFooterActions>
-          </ModalFooter>
-        </Modal>
-      </Theme.Provider>
-    );
-  }
+              Save
+            </Button>
+          </ModalFooterActions>
+        </ModalFooter>
+      </Modal>
+    </Theme.Provider>
+  );
 }
 
-const mapStateToProps = state => {
-  const componentViewStates = state.flex.view.componentViewStates;
-  const dispositionDialogState = componentViewStates && componentViewStates.DispositionDialog;
-  const isOpen = dispositionDialogState && dispositionDialogState.isOpen;
-  return {
-    isOpen
-  };
-};
-
-export default connect(mapStateToProps)(withTheme(withTaskContext(DispositionDialog)));
+export default withTheme(withTaskContext(DispositionDialog));
