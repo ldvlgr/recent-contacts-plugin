@@ -60,7 +60,11 @@ const DispositionDialog = ({ task }) => {
       newConv.outcome = disposition;
       newAttributes.conversations = newConv;
 
-      await task.setAttributes(newAttributes);
+      // Use new Flex 2.0 Action 
+      // See: https://www.twilio.com/docs/flex/developer/ui/migration-guide#new-actions-and-flex-events-for-the-taskrouter-sdk
+      await Actions.invokeAction("SetTaskAttributes", { sid: task.sid, attributes: newAttributes, mergeExisting: true });
+      
+      //await task.setAttributes(newAttributes);
       //clear disposition
       setDisposition(DefaultDisposition);
       closeDialog();
