@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
-import { withTaskContext, withTheme, Icon, TaskHelper, Manager } from '@twilio/flex-ui';
+import { Actions, withTaskContext, withTheme, Icon, TaskHelper, Manager } from '@twilio/flex-ui';
 import { Theme } from '@twilio-paste/core/theme';
 import { Button, Input, Flex, Box, Label, Text, TextArea, Table, THead, TBody, Th, Tr, Td } from "@twilio-paste/core";
 
-import { updateTaskAndConversationsAttributes } from '../../utils/taskUtil'
 let manager = Manager.getInstance();
 const PLUGIN_NAME = 'RecentContactsPlugin';
 
@@ -65,8 +64,10 @@ const AgentNotes = ({ task }) => {
         conversation_attribute_10: zipcode,
         content: notes
       };
-      let newTaskAttr = { customerName };
-      await updateTaskAndConversationsAttributes(task, newTaskAttr, convData);
+      let newTaskAttr = { customerName, conversations: convData };
+      // Use new Flex 2.0 Action 
+      // See: https://www.twilio.com/docs/flex/developer/ui/migration-guide#new-actions-and-flex-events-for-the-taskrouter-sdk
+      await Actions.invokeAction("SetTaskAttributes", { sid: task.sid, attributes: newTaskAttr, mergeExisting: true });
       setChanged(false);
 
       if (TaskHelper.isChatBasedTask(task)) {
