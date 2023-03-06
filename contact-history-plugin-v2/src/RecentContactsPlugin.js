@@ -6,8 +6,7 @@ import CustomizeFlexComponents from './components';
 import RecentContacts from './utils/RecentContacts';
 import registerNotifications from "./utils/notifications";
 import registerEventListeners from "./event-listeners";
-
-const PLUGIN_NAME = 'RecentContactsPlugin';
+import { PLUGIN_NAME, Languages } from './utils/constants';
 
 export default class RecentContactsPlugin extends FlexPlugin {
   constructor() {
@@ -22,10 +21,15 @@ export default class RecentContactsPlugin extends FlexPlugin {
    * @param manager { import('@twilio/flex-ui').Manager }
    */
   init(flex, manager) {
+    const defaultLanguage = Languages.EN;
+    const workerAttributes = manager.workerClient?.attributes;
+    const language = workerAttributes?.language || defaultLanguage;
+    ConfigureFlexStrings(manager, language);
+    
     this.registerReducers(manager);
     registerNotifications(manager);
     CustomizeFlexComponents(manager);
-    ConfigureFlexStrings(manager);
+    
     registerEventListeners(manager);
 
     //Init Redux from local storage

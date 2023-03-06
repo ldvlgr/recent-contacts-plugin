@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
-import { Actions, withTheme } from '@twilio/flex-ui';
+import { 
+  Actions, 
+  withTheme,
+  templates,
+  Template
+} from '@twilio/flex-ui';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Actions as ContactHistoryActions } from '../states/ContactHistoryState';
@@ -75,27 +80,29 @@ const clearHistory = ()=> {
           <Box padding="space40">
             <Button variant="primary"
               onClick={clearHistory}
-            > Clear History </Button>
+            > 
+            <Template source={templates.ClearHistory} />
+            </Button>
           </Box>
           <Table>
             <THead>
               <Tr>
-                <Th>Channel</Th>
-                <Th>Phone Number</Th>
-                <Th>Name</Th>
-                <Th>Date & Time</Th>
-                <Th align="center">Duration</Th>
-                <Th>Queue</Th>
-                <Th>Outcome</Th>
-                <Th align="center">Status</Th>
-                <Th>Notes</Th>
-                <Th>Transcript</Th>
+                <Th><Template source={templates.ContactChannel} /></Th>
+                <Th><Template source={templates.ContactPhoneNumber} /></Th>
+                <Th><Template source={templates.ContactName} /></Th>
+                <Th><Template source={templates.ContactDateTime} /></Th>
+                <Th align="center"><Template source={templates.ContactDuration} /></Th>
+                <Th><Template source={templates.ContactQueue} /></Th>
+                <Th><Template source={templates.ContactOutcome} /></Th>
+                <Th align="center"><Template source={templates.ContactStatus} /></Th>
+                <Th><Template source={templates.ContactNotes} /></Th>
+                <Th><Template source={templates.ContactTranscript} /></Th>
               </Tr>
 
             </THead>
             <TBody>
               {contactList?.map((rc) => (
-                <ContactRecord rc={rc} startContact={startContact} openTranscript={openTranscript} />
+                <ContactRecord key={rc.taskSid} rc={rc} startContact={startContact} openTranscript={openTranscript} />
               ))}
             </TBody>
           </Table>

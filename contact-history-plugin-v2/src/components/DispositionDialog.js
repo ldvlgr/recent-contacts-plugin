@@ -1,25 +1,25 @@
 import React, { useState } from 'react';
-import { Actions, withTheme, withTaskContext } from '@twilio/flex-ui';
+import {
+  Actions,
+  withTheme,
+  withTaskContext,
+  templates,
+  Template,
+  useFlexSelector
+} from '@twilio/flex-ui';
 import { useSelector } from 'react-redux';
 
 import { Theme } from '@twilio-paste/core/theme';
 import { Modal, ModalBody, ModalFooter, ModalFooterActions, ModalHeader, ModalHeading } from '@twilio-paste/core/modal';
 import { Button, Text, Select, Option } from "@twilio-paste/core";
+import { useUID } from "@twilio-paste/uid-library";
 
-const DefaultDisposition = 'DEFAULT';
-const outcomes = [
-  'New Order',
-  'Order Updated',
-  'Product Inquiry',
-  'Cancel Service',
-  'Change Service',
-  'Membership Renewal',
-  'Refund Requested',
-  'Product Replacement',
-  'Extend Warranty'];
+import { PLUGIN_NAME, Languages } from '../utils/constants';
+import { outcomes } from '../strings/DispositionCustomValues';
+
 
 const DispositionDialog = ({ task }) => {
-  const [disposition, setDisposition] = useState(DefaultDisposition);
+  const [disposition, setDisposition] = useState('');
   const isOpen = useSelector(
     state => {
       const componentViewStates = state.flex.view.componentViewStates;
@@ -27,6 +27,13 @@ const DispositionDialog = ({ task }) => {
       return dispositionDialogState && dispositionDialogState.isOpen;
     }
   );
+  // Get current language from worker attributes in Flex AppState
+  const language = useFlexSelector((state) => {
+    let workerLanguage = state?.flex?.worker?.attributes?.language || Languages.EN;
+    //Todo: Trigger reload all strings
+    return (workerLanguage);
+  });
+
 
   const handleClose = () => {
     closeDialog();
@@ -41,14 +48,14 @@ const DispositionDialog = ({ task }) => {
 
   const handleChange = e => {
     const value = e.target.value;
-    setDisposition( value );
+    setDisposition(value);
   }
 
   const handleSaveDisposition = async () => {
     //save disposition
     console.log('Saving call disposition');
     console.log('task: ', task);
-    if (disposition != DefaultDisposition) {
+    if (disposition) {
       let newAttributes = { ...task.attributes };
       newAttributes.disposition = disposition;
       //insights outcome
@@ -63,18 +70,21 @@ const DispositionDialog = ({ task }) => {
       // Use new Flex 2.0 Action 
       // See: https://www.twilio.com/docs/flex/developer/ui/migration-guide#new-actions-and-flex-events-for-the-taskrouter-sdk
       await Actions.invokeAction("SetTaskAttributes", { sid: task.sid, attributes: newAttributes, mergeExisting: true });
-      
+
       //await task.setAttributes(newAttributes);
       //clear disposition
-      setDisposition(DefaultDisposition);
+      setDisposition('');
       closeDialog();
     }
 
   }
 
+  const modalHeadingID = useUID();
   return (
     <Theme.Provider theme="flex">
       <Modal
+        ariaLabelledby={modalHeadingID}
+        size="default"
         isOpen={isOpen || false}
         onDismiss={handleClose}
       >
@@ -86,19 +96,19 @@ const DispositionDialog = ({ task }) => {
 
         <ModalBody>
           <Text>
-            Please choose the appropriate outcome/disposition value for this completed conversation.
+            <Template source={templates.DispositionSelectOutcome} />
           </Text>
           <Select
             value={disposition}
             onChange={handleChange}
             name="disposition"
           >
-            <Option value={DefaultDisposition}>SELECT DISPOSITION</Option>
+            {/* <Option value={DefaultDisposition}>SELECT DISPOSITION</Option> */}
             {outcomes.map((option) => (
               <Option
-                key={option}
-                value={option}
-              > {option}
+                key={option.value}
+                value={option.value}
+              > {option.labels[language]}
               </Option>
             ))}
           </Select>
@@ -109,7 +119,7 @@ const DispositionDialog = ({ task }) => {
               onClick={handleSaveDisposition}
               variant="primary" size="small"
             >
-              Save
+              <Template source={templates.Save} />
             </Button>
           </ModalFooterActions>
         </ModalFooter>

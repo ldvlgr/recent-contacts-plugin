@@ -1,6 +1,12 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Actions, withTheme, SidePanel } from '@twilio/flex-ui';
+import { 
+  Actions, 
+  withTheme, 
+  SidePanel,
+  templates,
+  Template 
+} from '@twilio/flex-ui';
 
 import Paper from '@material-ui/core/Paper';
 
@@ -38,7 +44,7 @@ class ChatTranscript extends React.Component {
 
       <SidePanel
         displayName="ChatTranscriptPanel"
-        title={<div>Chat Transcript</div>}
+        title={<Template source={templates.ChatTranscriptHeading} />}
         isHidden={!isOpen}
         handleCloseClick={this.handleClose}
       >

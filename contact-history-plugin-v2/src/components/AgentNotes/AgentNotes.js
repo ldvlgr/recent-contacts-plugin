@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from 'react';
 
-import { Actions, withTaskContext, withTheme, Icon, TaskHelper, Manager } from '@twilio/flex-ui';
+import {
+  Actions,
+  withTaskContext,
+  withTheme,
+  Icon,
+  TaskHelper,
+  Manager,
+  templates,
+  Template
+} from '@twilio/flex-ui';
 import { Theme } from '@twilio-paste/core/theme';
-import { Button, Input, Flex, Box, Label, Text, TextArea, Table, THead, TBody, Th, Tr, Td } from "@twilio-paste/core";
+import { Button, Input, Flex, Label, TextArea, Table, THead, TBody, Th, Tr, Td } from "@twilio-paste/core";
 
 let manager = Manager.getInstance();
-const PLUGIN_NAME = 'RecentContactsPlugin';
-
+import { PLUGIN_NAME } from '../../utils/constants';
 
 //Agent Notes Flex UI 2.0 Refactor with Hooks
 const AgentNotes = ({ task }) => {
@@ -21,7 +29,7 @@ const AgentNotes = ({ task }) => {
 
   //Init state from task attributes on initial mount ONLY
   useEffect(() => {
-    console.log(PLUGIN_NAME, 'useEffect to update state from task:', task);
+    //console.log(PLUGIN_NAME, 'useEffect to update state from task:', task);
     if (task) {
       setCustomerName(task.attributes?.customerName || '');
       setCaseId(task.attributes?.conversations?.case || '');
@@ -39,16 +47,16 @@ const AgentNotes = ({ task }) => {
     const id = e.target.id;
     setChanged(true);
     switch (id) {
-      case 'customerName': 
+      case 'customerName':
         setCustomerName(value);
         break;
-      case 'caseId': 
+      case 'caseId':
         setCaseId(value);
         break;
-      case 'zipcode': 
+      case 'zipcode':
         setZipcode(value);
         break;
-      case 'notes': 
+      case 'notes':
         setNotes(value);
         break;
     }
@@ -113,7 +121,7 @@ const AgentNotes = ({ task }) => {
                     {task && task.attributes.channelType == 'sms' && <Icon icon='Sms' />}
                   </Th>
                   <Th>
-                    Conversation Notes
+                    <Template source={templates.AgentNotesHeading} />
                   </Th>
                 </Tr>
               </THead>
@@ -124,36 +132,48 @@ const AgentNotes = ({ task }) => {
                 </Tr>
                 <Tr key='customerName'>
                   <Th scope="row">
-                    <Label htmlFor="customerName">Customer Name</Label>
+                    <Label htmlFor="customerName">
+                      <Template source={templates.AgentNotesCustomerName} />
+                    </Label>
                   </Th>
                   <Td>
-                    <Input id='customerName' value={customerName} onChange={handleChange} />
+                    <Input id='customerName' type="text" value={customerName} onChange={handleChange} />
                   </Td>
                 </Tr>
                 <Tr key='caseId'>
                   <Th scope="row">
-                    <Label htmlFor="caseId">Case ID</Label>
+                    <Label htmlFor="caseId">
+                      <Template source={templates.AgentNotesCaseID} />
+                    </Label>
                   </Th>
                   <Td>
-                    <Input id='caseId' value={caseId} onChange={handleChange} />
+                    <Input id='caseId' type="text" value={caseId} onChange={handleChange} />
                   </Td>
                 </Tr>
                 <Tr key='zipcode'>
                   <Th scope="row">
-                    <Label htmlFor="zipcode">Zip Code</Label>
+                    <Label htmlFor="zipcode">
+                      <Template source={templates.AgentNotesZipCode} />
+                    </Label>
                   </Th>
                   <Td>
-                    <Input id='zipcode' value={zipcode} onChange={handleChange} />
+                    <Input id='zipcode' type="text" value={zipcode} onChange={handleChange} />
                   </Td>
                 </Tr>
                 <Tr key='previous-notes'>
-                  <Th scope="row"><Label>Previous Notes</Label></Th>
+                  <Th scope="row"><Label>
+                    <Template source={templates.AgentNotesPrevious} />
+                  </Label>
+                  </Th>
                   <Td>
                     {previousNotes}
                   </Td>
                 </Tr>
                 <Tr key='notes'>
-                  <Th scope="row"><Label htmlFor="notes" required>Notes</Label></Th>
+                  <Th scope="row"><Label htmlFor="notes" required>
+                    <Template source={templates.AgentNotes} />
+                  </Label>
+                  </Th>
                   <Td>
                     <TextArea id="notes"
                       value={notes} onChange={handleChange}
@@ -169,7 +189,7 @@ const AgentNotes = ({ task }) => {
                       onClick={saveAttributes}
                       disabled={!changed}
                     >
-                      Save
+                       <Template source={templates.Save} />
                     </Button>
                   </Td>
                 </Tr>
