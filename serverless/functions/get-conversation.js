@@ -17,7 +17,9 @@ exports.handler = TokenValidator(async function (context, event, callback) {
       .conversations(conversationSid)
       .fetch()
       
-    let friendly_name = conversation.friendlyName;
+    const friendlyName = conversation.friendlyName;
+    const conversationDateCreated  = conversation.dateCreated;
+    const conversationDateUpdated = conversation.dateUpdated;
     let conversationAttributes = JSON.parse(conversation.attributes);
     console.log('CONVERSATION:', conversation);
     
@@ -46,13 +48,19 @@ exports.handler = TokenValidator(async function (context, event, callback) {
       msgList.push({ date: dateCreated, index, author, participantSid, body, file });
     });
 
-    let chatData = { friendly_name, participants, messages:msgList}
+    const chatData = { 
+      friendlyName, 
+      conversationDateCreated, 
+      conversationDateUpdated, 
+      participants, 
+      messages:msgList
+    }
 
     response.appendHeader("Content-Type", "application/json");
     response.setBody(chatData);
     return callback(null, response);
   } catch (err) {
-    returnError(callback, response, err.message);
+    return returnError(callback, response, err.message);
   }
 });
 

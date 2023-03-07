@@ -65,7 +65,7 @@ exports.handler = TokenValidator(async function (context, event, callback) {
     response.setBody(chatData);
     return callback(null, response);
   } catch (err) {
-    returnError(callback, response, err.message);
+    return returnError(callback, response, err.message);
   }
 });
 
