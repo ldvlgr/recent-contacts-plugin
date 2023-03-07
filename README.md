@@ -10,17 +10,16 @@ This Flex plugin adds a Recent Contacts View to the Flex UI and allows agents to
 Note: Upgrade to Flex UI 2.0 in progress.  Updated source for Flex UI 2.0 can found in -v2 folder.
 
 
-<img width="800px" src="images/ContactHistoryWithNewTranscript.png"/>
+<img width="800px" src="images/ContactHistoryV2.png"/>
 
 This plugin also provides a modal Call Disposition window to agent after hangup (wrap up) to encourage agents to select the call outcome, before completing the call.  The outcome is saved in the task and displayed in the view.
 
-<img width="500px" src="images/outcomeDisposition.png"/>
+<img width="500px" src="images/DispositionV2.png"/>
 
-NEW (July 2022): This plugin now also contains a form in the CRM Panel where the agent can to capture notes about the conversation, the customer's case number and Zip Code. Notes are stored in the task attributes and as Chat Channel Attributes.
+ This plugin also contains a form in the CRM Panel where the agent can to capture notes about the conversation, the customer's case number and Zip Code. Notes are stored in the task attributes and as Chat Channel Attributes.
 
-Furthermore, Chat and SMS conversations can be changed to "Pending" which updates the chat channel attribute long_lived = true and adds the workerName to the channel attributes. (Flex 1.x only)
 
-<img width="800px" src="images/PendingChatAgentNotes.png"/>
+<img width="800px" src="images/AgentNotesV2.png"/>
 
 
 This plugin leverages Serverless functions to retrieve all messages from the Chat Channel (Conversation).  The list of messages is used to populate the Chat Transcript component.
