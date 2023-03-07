@@ -8,7 +8,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Actions as ContactHistoryActions } from '../states/ContactHistoryState';
-import ChatTranscript from './ChatTranscript/ChatTranscript';
+import ChatTranscript from './ChatTranscript/ChatTranscriptV2';
 import RecentContacts from '../utils/RecentContacts';
 
 import { Theme } from '@twilio-paste/core/theme';
@@ -16,13 +16,14 @@ import { Button, Flex, Box, Table, THead, TBody, Th, Tr } from "@twilio-paste/co
 
 import ContactRecord from './ContactRecord';
 import ConversationUtil from '../utils/ConversationUtil';
-
-const PLUGIN_NAME = 'RecentContactsPlugin';
+import { PLUGIN_NAME } from '../utils/constants';
 
 const ContactHistory = () => {
   const [selectedConversationSid, setSelectedConversationSid] = useState();
   const [messages, setMessages] = useState([]);
   const [conversationFriendlyName, setConversationFriendlyName] = useState('');
+  const [conversationDateCreated, setConversationDateCreated] = useState('');
+  
 
   const contactData = useSelector(
     state => { return {contactList: state['recent-contacts']?.contactHistory?.contactList }; }
@@ -53,13 +54,18 @@ const ContactHistory = () => {
     });
 
     const convoData = await ConversationUtil.getConversation(conversationSid);
+    console.log(PLUGIN_NAME, convoData);
     let messages = convoData.messages;
-    let conversationFriendlyName = convoData.friendly_name;
+    let conversationFriendlyName = convoData.friendlyName;
     if (!messages) conversationFriendlyName = "Not Available";
+    setConversationFriendlyName(conversationFriendlyName);
+    setConversationDateCreated(convoData.conversationDateCreated);
+
     //if no data show notification
     setSelectedConversationSid(conversationSid);
     setMessages(messages);
-    setConversationFriendlyName(conversationFriendlyName);
+    console.log(PLUGIN_NAME, messages);
+    
   }
 
   const resetConversation = () => {
@@ -110,6 +116,7 @@ const clearHistory = ()=> {
         <ChatTranscript key="chat-transcript"
           conversationSid={selectedConversationSid}
           conversationFriendlyName={conversationFriendlyName}
+          dateCreated={conversationDateCreated}
           messages={messages}
           resetConversation={resetConversation} />
       </Flex>
