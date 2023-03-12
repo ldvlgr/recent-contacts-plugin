@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { 
-  Actions, 
-  withTheme,
+import {
+  Actions,
   templates,
   Template
 } from '@twilio/flex-ui';
@@ -11,7 +10,6 @@ import { Actions as ContactHistoryActions } from '../states/ContactHistoryState'
 import ChatTranscript from './ChatTranscript/ChatTranscriptV2';
 import RecentContacts from '../utils/RecentContacts';
 
-import { Theme } from '@twilio-paste/core/theme';
 import { Button, Flex, Box, Table, THead, TBody, Th, Tr } from "@twilio-paste/core";
 
 import ContactRecord from './ContactRecord';
@@ -23,10 +21,10 @@ const ContactHistory = () => {
   const [messages, setMessages] = useState([]);
   const [conversationFriendlyName, setConversationFriendlyName] = useState('');
   const [conversationDateCreated, setConversationDateCreated] = useState('');
-  
+
 
   const contactData = useSelector(
-    state => { return {contactList: state['recent-contacts']?.contactHistory?.contactList }; }
+    state => { return { contactList: state['recent-contacts']?.contactHistory?.contactList }; }
   );
   //console.log(PLUGIN_NAME, 'contactData:', contactData);
   let contactList = contactData?.contactList || [];
@@ -65,7 +63,7 @@ const ContactHistory = () => {
     setSelectedConversationSid(conversationSid);
     setMessages(messages);
     console.log(PLUGIN_NAME, messages);
-    
+
   }
 
   const resetConversation = () => {
@@ -74,22 +72,22 @@ const ContactHistory = () => {
     setConversationFriendlyName('');
   }
 
-const clearHistory = ()=> {
-  dispatch(ContactHistoryActions.clearHistory());
-  RecentContacts.clearContactList();
-}
+  const clearHistory = () => {
+    dispatch(ContactHistoryActions.clearHistory());
+    RecentContacts.clearContactList();
+  }
 
   return (
-    <Theme.Provider theme="flex">
-      <Flex>
-        <Flex vertical >
-          <Box padding="space40">
-            <Button variant="primary"
-              onClick={clearHistory}
-            > 
+    <Flex width="100%">
+      <Flex vertical width="100%" grow shrink>
+        <Box padding="space40">
+          <Button variant="primary"
+            onClick={clearHistory}
+          >
             <Template source={templates.ClearHistory} />
-            </Button>
-          </Box>
+          </Button>
+        </Box>
+        <Box width="100%">
           <Table>
             <THead>
               <Tr>
@@ -112,17 +110,16 @@ const clearHistory = ()=> {
               ))}
             </TBody>
           </Table>
-        </Flex>
-        <ChatTranscript key="chat-transcript"
-          conversationSid={selectedConversationSid}
-          conversationFriendlyName={conversationFriendlyName}
-          dateCreated={conversationDateCreated}
-          messages={messages}
-          resetConversation={resetConversation} />
+        </Box>
       </Flex>
-    </Theme.Provider>
+      <ChatTranscript key="chat-transcript"
+        conversationSid={selectedConversationSid}
+        conversationFriendlyName={conversationFriendlyName}
+        dateCreated={conversationDateCreated}
+        messages={messages}
+        resetConversation={resetConversation} />
+    </Flex>
   );
-
 }
 
-export default withTheme(ContactHistory);
+export default ContactHistory;

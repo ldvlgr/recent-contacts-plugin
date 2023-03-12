@@ -1,6 +1,7 @@
 import { Actions, VERSION } from '@twilio/flex-ui';
 import { FlexPlugin } from '@twilio/flex-plugin';
 import reducers, { namespace } from './states';
+import { CustomizationProvider } from '@twilio-paste/core/customization';
 import ConfigureFlexStrings from './strings';
 import CustomizeFlexComponents from './components';
 import RecentContacts from './utils/RecentContacts';
@@ -21,6 +22,10 @@ export default class RecentContactsPlugin extends FlexPlugin {
    * @param manager { import('@twilio/flex-ui').Manager }
    */
   init(flex, manager) {
+    flex.setProviders({
+      PasteThemeProvider: CustomizationProvider,
+    });
+
     const defaultLanguage = Languages.EN;
     const workerAttributes = manager.workerClient?.attributes;
     const language = workerAttributes?.language || defaultLanguage;

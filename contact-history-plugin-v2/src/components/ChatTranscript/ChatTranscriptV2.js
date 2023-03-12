@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 import {
   Actions,
-  withTheme,
   SidePanel,
   templates,
   Template
@@ -81,4 +80,4 @@ const ChatTranscript = ({ conversationSid, dateCreated, messages, resetConversat
   );
 }
 
-export default withTheme(ChatTranscript);
+export default ChatTranscript;
