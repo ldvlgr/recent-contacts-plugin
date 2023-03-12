@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   Actions,
-  withTheme,
   withTaskContext,
   templates,
   Template,
@@ -9,7 +8,6 @@ import {
 } from '@twilio/flex-ui';
 import { useSelector } from 'react-redux';
 
-import { Theme } from '@twilio-paste/core/theme';
 import { Modal, ModalBody, ModalFooter, ModalFooterActions, ModalHeader, ModalHeading } from '@twilio-paste/core/modal';
 import { Button, Text, Select, Option } from "@twilio-paste/core";
 import { useUID } from "@twilio-paste/uid-library";
@@ -81,51 +79,49 @@ const DispositionDialog = ({ task }) => {
 
   const modalHeadingID = useUID();
   return (
-    <Theme.Provider theme="flex">
-      <Modal
-        ariaLabelledby={modalHeadingID}
-        size="default"
-        isOpen={isOpen || false}
-        onDismiss={handleClose}
-      >
-        <ModalHeader>
-          <ModalHeading as="h3" id='disposition'>
-            Select Conversation Outcome/Disposition.
-          </ModalHeading>
-        </ModalHeader>
+    <Modal
+      ariaLabelledby={modalHeadingID}
+      size="default"
+      isOpen={isOpen || false}
+      onDismiss={handleClose}
+    >
+      <ModalHeader>
+        <ModalHeading as="h3" id='disposition'>
+          Select Conversation Outcome/Disposition.
+        </ModalHeading>
+      </ModalHeader>
 
-        <ModalBody>
-          <Text>
-            <Template source={templates.DispositionSelectOutcome} />
-          </Text>
-          <Select
-            value={disposition}
-            onChange={handleChange}
-            name="disposition"
+      <ModalBody>
+        <Text>
+          <Template source={templates.DispositionSelectOutcome} />
+        </Text>
+        <Select
+          value={disposition}
+          onChange={handleChange}
+          name="disposition"
+        >
+          {/* <Option value={DefaultDisposition}>SELECT DISPOSITION</Option> */}
+          {outcomes.map((option) => (
+            <Option
+              key={option.value}
+              value={option.value}
+            > {option.labels[language]}
+            </Option>
+          ))}
+        </Select>
+      </ModalBody>
+      <ModalFooter>
+        <ModalFooterActions>
+          <Button
+            onClick={handleSaveDisposition}
+            variant="primary" size="small"
           >
-            {/* <Option value={DefaultDisposition}>SELECT DISPOSITION</Option> */}
-            {outcomes.map((option) => (
-              <Option
-                key={option.value}
-                value={option.value}
-              > {option.labels[language]}
-              </Option>
-            ))}
-          </Select>
-        </ModalBody>
-        <ModalFooter>
-          <ModalFooterActions>
-            <Button
-              onClick={handleSaveDisposition}
-              variant="primary" size="small"
-            >
-              <Template source={templates.Save} />
-            </Button>
-          </ModalFooterActions>
-        </ModalFooter>
-      </Modal>
-    </Theme.Provider>
+            <Template source={templates.Save} />
+          </Button>
+        </ModalFooterActions>
+      </ModalFooter>
+    </Modal>
   );
 }
 
-export default withTheme(withTaskContext(DispositionDialog));
+export default withTaskContext(DispositionDialog);

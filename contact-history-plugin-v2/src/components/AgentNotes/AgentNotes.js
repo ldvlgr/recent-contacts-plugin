@@ -3,15 +3,14 @@ import React, { useState, useEffect } from 'react';
 import {
   Actions,
   withTaskContext,
-  withTheme,
   Icon,
   TaskHelper,
   Manager,
   templates,
   Template
 } from '@twilio/flex-ui';
-import { Theme } from '@twilio-paste/core/theme';
-import { Button, Input, Flex, Label, TextArea, Table, THead, TBody, Th, Tr, Td } from "@twilio-paste/core";
+
+import { Button, Input, Flex, Box, Label, TextArea, Table, THead, TBody, Th, Tr, Td } from "@twilio-paste/core";
 
 let manager = Manager.getInstance();
 import { PLUGIN_NAME } from '../../utils/constants';
@@ -108,10 +107,10 @@ const AgentNotes = ({ task }) => {
 
 
   return (
-    <Theme.Provider theme="flex">
-      <Flex>
-        {task &&
-          <Flex vertical>
+    <Flex width="100%">
+      {task &&
+        <Flex vertical width="100%">
+          <Box width="100%">
             <Table>
               <THead>
                 <Tr>
@@ -189,18 +188,18 @@ const AgentNotes = ({ task }) => {
                       onClick={saveAttributes}
                       disabled={!changed}
                     >
-                       <Template source={templates.Save} />
+                      <Template source={templates.Save} />
                     </Button>
                   </Td>
                 </Tr>
               </TBody>
             </Table>
-          </Flex>
-        }
-      </Flex>
-    </Theme.Provider>
+          </Box>
+        </Flex>
+      }
+    </Flex>
   );
 }
 
 
-export default withTaskContext(withTheme(AgentNotes));
+export default withTaskContext(AgentNotes);
